@@ -1329,3 +1329,11 @@ function openWalletAction(cat) {
 }
 
 window.onload = loadData;
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(() => console.log('Service Worker aktif ✨'))
+            .catch((err) => console.log('Gagal daftar Service Worker', err));
+    });
+}
