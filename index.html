@@ -56,10 +56,13 @@
         </div>
     </div>
 
-    <div class="balance-card">
+<div class="balance-card">
         <div class="card-header">
             <span><span class="text-accent">Fashion</span> Savings</span>
-            <i data-lucide="shirt"></i>
+            <div class="card-header-actions">
+                <button class="icon-btn-tiny" onclick="openPurchaseLog('fashion')"><i data-lucide="clipboard-list"></i></button>
+                <i data-lucide="shirt"></i>
+            </div>
         </div>
         <h3 id="fashionBalanceTotal">Rp0</h3>
         <div class="wallet-split">
@@ -83,10 +86,13 @@
         </div>
     </div>
 
-    <div class="balance-card">
+<div class="balance-card">
         <div class="card-header">
             <span><span class="text-accent">Skincare</span> Savings</span>
-            <i data-lucide="sparkles"></i>
+            <div class="card-header-actions">
+                <button class="icon-btn-tiny" onclick="openPurchaseLog('skincare')"><i data-lucide="clipboard-list"></i></button>
+                <i data-lucide="sparkles"></i>
+            </div>
         </div>
         <h3 id="skincareBalanceTotal">Rp0</h3>
         <div class="wallet-split">
@@ -473,6 +479,29 @@
         </div>
     </div>
 
+<div class="modal-overlay" id="purchaseLogModal" onclick="closeModal(this.id, event)">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <h3 class="modal-title" id="purchaseLogTitle">Riwayat <span class="text-accent">Pembelian</span></h3>
+            <div id="purchaseLogList" class="purchase-log-list"></div>
+            <hr class="elegant-hr">
+            <div class="form-group">
+                <label>Nama Produk</label>
+                <input type="text" id="plName" class="input-field" placeholder="Cth: Serum Niacinamide">
+            </div>
+            <div class="form-group">
+                <label>Tanggal Beli</label>
+                <input type="date" id="plPurchaseDate" class="input-field">
+            </div>
+            <div class="form-group">
+                <label>Estimasi Tanggal Habis</label>
+                <input type="date" id="plExpiryDate" class="input-field">
+            </div>
+            <input type="hidden" id="plCat" value="">
+            <button class="btn-primary w-100 mt-4" onclick="savePurchaseItem()">Simpan</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="recapPreviewModal" onclick="closeModal(this.id, event)">
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
@@ -544,3 +573,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
