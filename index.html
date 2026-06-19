@@ -403,7 +403,7 @@
             </div>
             <div class="form-group" id="bizNameGroup" style="display:none;">
                 <label>Nama Pelanggan (Gunakan nama yang sama untuk gabung hutang)</label>
-                <input type="text" id="bizCustomer" class="input-field" placeholder="Cth: Adit">
+                <input type="text" id="bizCustomer" class="input-field" placeholder="">
             </div>
             <button class="btn-primary w-100 mt-4" onclick="processBusiness()">Simpan</button>
         </div>
@@ -461,7 +461,7 @@
             <h3 class="modal-title">Add <span class="text-accent">Goal</span></h3>
             <div class="form-group">
                 <label>Nama Barang</label>
-                <input type="text" id="goalName" placeholder="Cth: Converse High" class="input-field">
+                <input type="text" id="goalName" placeholder="" class="input-field">
             </div>
             <div class="form-group">
                 <label>Target Harga (Rp)</label>
@@ -483,22 +483,8 @@
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
             <h3 class="modal-title" id="purchaseLogTitle">Riwayat <span class="text-accent">Pembelian</span></h3>
-            <div id="purchaseLogList" class="purchase-log-list"></div>
-            <hr class="elegant-hr">
-            <div class="form-group">
-                <label>Nama Produk</label>
-                <input type="text" id="plName" class="input-field" placeholder="Cth: Serum Niacinamide">
-            </div>
-            <div class="form-group">
-                <label>Tanggal Beli</label>
-                <input type="date" id="plPurchaseDate" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Estimasi Tanggal Habis</label>
-                <input type="date" id="plExpiryDate" class="input-field">
-            </div>
-            <input type="hidden" id="plCat" value="">
-            <button class="btn-primary w-100 mt-4" onclick="savePurchaseItem()">Simpan</button>
+            <p class="subtext mt-2">Tercatat otomatis tiap kali kamu catat pengeluaran di kategori ini.</p>
+            <div id="purchaseLogList" class="purchase-log-list mt-3"></div>
         </div>
     </div>
 
