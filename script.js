@@ -662,11 +662,7 @@ function renderWeeklyHistory() {
 
 // --- PURCHASE LOG (Fashion/Skincare) ---
 function openPurchaseLog(cat) {
-    document.getElementById('plCat').value = cat;
     document.getElementById('purchaseLogTitle').innerHTML = `Riwayat <span class="text-accent">Pembelian</span> - ${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
-    document.getElementById('plName').value = '';
-    document.getElementById('plPurchaseDate').value = '';
-    document.getElementById('plExpiryDate').value = '';
     renderPurchaseLog(cat);
     openModal('purchaseLogModal');
 }
@@ -691,14 +687,17 @@ function renderPurchaseLog(cat) {
 
     const today = new Date(new Date().toISOString().split('T')[0]);
 
-    items.slice().sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)).forEach(item => {
-        const expiry = new Date(item.expiryDate);
-        const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-
-        let statusClass = 'text-green';
-        let statusText = `${diffDays} hari lagi`;
-        if (diffDays < 0) { statusClass = 'text-red'; statusText = 'Sudah expired'; }
-        else if (diffDays <= 7) { statusClass = 'text-accent'; statusText = `${diffDays} hari lagi`; }
+    items.slice().reverse().forEach(item => {
+        let statusHtml = '';
+        if (item.expiryDate) {
+            const expiry = new Date(item.expiryDate);
+            const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+            let statusClass = 'text-green';
+            let statusText = `${diffDays} hari lagi`;
+            if (diffDays < 0) { statusClass = 'text-red'; statusText = 'Sudah expired'; }
+            else if (diffDays <= 7) { statusClass = 'text-accent'; statusText = `${diffDays} hari lagi`; }
+            statusHtml = `<div class="${statusClass} fw-600" style="font-size:12px;">${statusText}</div>`;
+        }
 
         const div = document.createElement('div');
         div.className = 'purchase-log-item';
@@ -706,12 +705,16 @@ function renderPurchaseLog(cat) {
             <div class="flex-between">
                 <div>
                     <div class="fw-600" style="font-size:14px;">${item.name}</div>
-                    <div class="subtext">Beli: ${formatDateID(item.purchaseDate)} • Habis: ${formatDateID(item.expiryDate)}</div>
+                    <div class="subtext">Beli: ${formatDateID(item.purchaseDate)}</div>
                 </div>
                 <div class="text-right">
-                    <div class="${statusClass} fw-600" style="font-size:12px;">${statusText}</div>
+                    ${statusHtml}
                     <button class="icon-btn-small mt-2" onclick="deletePurchaseItem('${item.id}')"><i data-lucide="trash-2" style="width:14px"></i></button>
                 </div>
+            </div>
+            <div class="mt-2">
+                <label class="subtext" style="display:block;margin-bottom:4px;">Estimasi habis (opsional)</label>
+                <input type="date" class="input-field" style="padding:8px;font-size:13px;" value="${item.expiryDate || ''}" onchange="updateExpiryDate('${item.id}', this.value)">
             </div>
         `;
         list.appendChild(div);
@@ -720,26 +723,12 @@ function renderPurchaseLog(cat) {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-function savePurchaseItem() {
-    const cat = document.getElementById('plCat').value;
-    const name = document.getElementById('plName').value.trim();
-    const purchaseDate = document.getElementById('plPurchaseDate').value;
-    const expiryDate = document.getElementById('plExpiryDate').value;
-
-    if (!name || !purchaseDate || !expiryDate) {
-        showSnackbar('❌ Lengkapi semua data dulu');
-        return;
-    }
-
-    state.purchaseLog.push({ id: generateId(), cat, name, purchaseDate, expiryDate });
+function updateExpiryDate(id, value) {
+    const item = state.purchaseLog.find(p => p.id === id);
+    if (!item) return;
+    item.expiryDate = value || null;
     saveData();
-    renderPurchaseLog(cat);
-
-    document.getElementById('plName').value = '';
-    document.getElementById('plPurchaseDate').value = '';
-    document.getElementById('plExpiryDate').value = '';
-
-    showSnackbar('Produk ditambahkan ✨');
+    renderPurchaseLog(item.cat);
 }
 
 function deletePurchaseItem(id) {
@@ -824,6 +813,17 @@ if (currentTrxType === 'income') {
             return;
         }
         state.balances[poscat][wallet] -= amount;
+    }
+
+    // Auto catat ke Riwayat Pembelian kalau expense di Fashion/Skincare
+    if (poscat === 'fashion' || poscat === 'skincare') {
+        state.purchaseLog.push({
+            id: generateId(),
+            cat: poscat,
+            name: desc,
+            purchaseDate: new Date().toISOString().split('T')[0],
+            expiryDate: null
+        });
     }
 }
 
