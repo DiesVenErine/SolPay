@@ -33,7 +33,8 @@ goals: [],
     streak: { count: 0, lastDate: null },
     recapDoneWeekId: null,
     weeklyHistory: [],
-    statsWeekId: null
+    statsWeekId: null,
+    purchaseLog: []
 };
 
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -238,8 +239,9 @@ function loadData() {
     if (saved) state = JSON.parse(saved);
 
     // Safety untuk data lama yang belum punya field baru
-    if (!state.weeklyHistory) state.weeklyHistory = [];
+if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
+    if (!state.purchaseLog) state.purchaseLog = [];
 
     checkWeeklyReset();
 
@@ -656,6 +658,97 @@ function renderWeeklyHistory() {
         `;
         list.appendChild(div);
     });
+}
+
+// --- PURCHASE LOG (Fashion/Skincare) ---
+function openPurchaseLog(cat) {
+    document.getElementById('plCat').value = cat;
+    document.getElementById('purchaseLogTitle').innerHTML = `Riwayat <span class="text-accent">Pembelian</span> - ${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
+    document.getElementById('plName').value = '';
+    document.getElementById('plPurchaseDate').value = '';
+    document.getElementById('plExpiryDate').value = '';
+    renderPurchaseLog(cat);
+    openModal('purchaseLogModal');
+}
+
+function formatDateID(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function renderPurchaseLog(cat) {
+    const list = document.getElementById('purchaseLogList');
+    if (!list) return;
+    const items = state.purchaseLog.filter(p => p.cat === cat);
+    list.innerHTML = '';
+
+    if (items.length === 0) {
+        list.innerHTML = `<p class="subtext text-center">Belum ada catatan pembelian ✨</p>`;
+        return;
+    }
+
+    const today = new Date(new Date().toISOString().split('T')[0]);
+
+    items.slice().sort((a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)).forEach(item => {
+        const expiry = new Date(item.expiryDate);
+        const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+
+        let statusClass = 'text-green';
+        let statusText = `${diffDays} hari lagi`;
+        if (diffDays < 0) { statusClass = 'text-red'; statusText = 'Sudah expired'; }
+        else if (diffDays <= 7) { statusClass = 'text-accent'; statusText = `${diffDays} hari lagi`; }
+
+        const div = document.createElement('div');
+        div.className = 'purchase-log-item';
+        div.innerHTML = `
+            <div class="flex-between">
+                <div>
+                    <div class="fw-600" style="font-size:14px;">${item.name}</div>
+                    <div class="subtext">Beli: ${formatDateID(item.purchaseDate)} • Habis: ${formatDateID(item.expiryDate)}</div>
+                </div>
+                <div class="text-right">
+                    <div class="${statusClass} fw-600" style="font-size:12px;">${statusText}</div>
+                    <button class="icon-btn-small mt-2" onclick="deletePurchaseItem('${item.id}')"><i data-lucide="trash-2" style="width:14px"></i></button>
+                </div>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function savePurchaseItem() {
+    const cat = document.getElementById('plCat').value;
+    const name = document.getElementById('plName').value.trim();
+    const purchaseDate = document.getElementById('plPurchaseDate').value;
+    const expiryDate = document.getElementById('plExpiryDate').value;
+
+    if (!name || !purchaseDate || !expiryDate) {
+        showSnackbar('❌ Lengkapi semua data dulu');
+        return;
+    }
+
+    state.purchaseLog.push({ id: generateId(), cat, name, purchaseDate, expiryDate });
+    saveData();
+    renderPurchaseLog(cat);
+
+    document.getElementById('plName').value = '';
+    document.getElementById('plPurchaseDate').value = '';
+    document.getElementById('plExpiryDate').value = '';
+
+    showSnackbar('Produk ditambahkan ✨');
+}
+
+function deletePurchaseItem(id) {
+    const idx = state.purchaseLog.findIndex(p => p.id === id);
+    if (idx === -1) return;
+    const cat = state.purchaseLog[idx].cat;
+    state.purchaseLog.splice(idx, 1);
+    saveData();
+    renderPurchaseLog(cat);
 }
 
 // --- SNACKBAR (UNDO SYSTEM) ---
@@ -1337,3 +1430,4 @@ if ('serviceWorker' in navigator) {
             .catch((err) => console.log('Gagal daftar Service Worker', err));
     });
 }
+
