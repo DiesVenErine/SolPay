@@ -933,6 +933,11 @@ function deleteGoal(idx) {
 }
 
 // --- BUSINESS LOGIC ---
+function bizProductLabel(type) {
+    const labels = { transfer: 'Transfer', data: 'Paket Data', pulsa: 'Pulsa', pln: 'PLN', ewallet: 'E-Wallet', game: 'Top Up Game' };
+    return labels[type] || type.toUpperCase();
+}
+
 function updateBizProfit() {
     const type = document.getElementById('bizProduct').value;
     const status = document.getElementById('bizStatus').value;
@@ -940,12 +945,16 @@ function updateBizProfit() {
 
     let p = 0;
 
-    if (type === 'quota') {
+    if (type === 'data') {
         p = 3000;
-    } else if (type === 'wd') {
+    } else if (type === 'transfer') {
         p = cap < 100000 ? 3000 : 5000;
-    } else if (type === 'token') {
+    } else if (type === 'pln') {
         p = 4000;
+    } else if (type === 'game') {
+        p = 3000;
+    } else if (type === 'pulsa') {
+        p = cap < 50000 ? 3000 : 4000;
     } else if (type === 'ewallet') {
         if (status === 'paid') {
             if (cap < 50000) p = 3000;
@@ -1003,15 +1012,15 @@ state.balances.main[toWal] += profit;
 
 // Auto balikin hutang modal
 repayBusinessDebt();
-        state.history.push({ id: generateId(), type: 'business', amount: profit, cat: 'main', wallet: toWal, desc: `Biz: ${type.toUpperCase()} (Paid)`, day: activeDayIndex, isBusinessProfit: true });
+state.history.push({ id: generateId(), type: 'business', amount: profit, cat: 'main', wallet: toWal, desc: `Biz: ${bizProductLabel(type)} (Paid)`, day: activeDayIndex, isBusinessProfit: true });
         updateStreak();
     } else {
         const custName = document.getElementById('bizCustomer').value.trim() || 'Unknown Customer';
         state.balances.business.dana -= cap; // Spend capital now. Wait for debt to be fully paid to return it.
 
-        let existingCust = state.receivables.find(r => r.name.toLowerCase() === custName.toLowerCase());
+let existingCust = state.receivables.find(r => r.name.toLowerCase() === custName.toLowerCase());
         if (existingCust) {
-            existingCust.items.push({ desc: type.toUpperCase(), cap: cap, profit: profit });
+            existingCust.items.push({ desc: bizProductLabel(type), cap: cap, profit: profit });
             existingCust.totalDebt += (cap + profit);
             existingCust.totalCapital += cap;
             existingCust.totalProfit += profit;
@@ -1020,7 +1029,7 @@ repayBusinessDebt();
             state.receivables.push({
                 id: generateId(),
                 name: custName,
-                items: [{ desc: type.toUpperCase(), cap: cap, profit: profit }],
+                items: [{ desc: bizProductLabel(type), cap: cap, profit: profit }],
                 totalDebt: cap + profit,
                 totalCapital: cap,
                 totalProfit: profit,
