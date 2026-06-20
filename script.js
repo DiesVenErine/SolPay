@@ -242,7 +242,8 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 function initAppState() {
     if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
-    if (!state.purchaseLog) state.purchaseLog = [];
+if (!state.purchaseLog) state.purchaseLog = [];
+    if (state.ownerUserId === undefined) state.ownerUserId = null;
 
     checkWeeklyReset();
 
@@ -296,6 +297,84 @@ function showAuthError(msg, isSuccess) {
     el.classList.toggle('text-green', !!isSuccess);
 }
 
+let authMode = 'login';
+
+function resetAuthMode() {
+    authMode = 'login';
+    document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
+    document.getElementById('authSubmitBtn').textContent = 'Masuk';
+    document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
+    document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
+    document.getElementById('authSwitchLink').textContent = 'Daftar';
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authPassword').value = '';
+}
+
+function switchAuthMode() {
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    document.getElementById('authError').classList.add('hidden');
+
+    if (authMode === 'signup') {
+        document.getElementById('authModeTitle').textContent = 'Daftar Akun Baru';
+        document.getElementById('authSubmitBtn').textContent = 'Daftar';
+        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleSignup()');
+        document.getElementById('authSwitchText').textContent = 'Sudah punya akun?';
+        document.getElementById('authSwitchLink').textContent = 'Masuk';
+    } else {
+        document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
+        document.getElementById('authSubmitBtn').textContent = 'Masuk';
+        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
+        document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
+        document.getElementById('authSwitchLink').textContent = 'Daftar';
+    }
+}
+
+async function openSettingsModal() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const statusEl = document.getElementById('settingsAccountStatus');
+    if (statusEl) statusEl.textContent = user ? user.email : 'Belum login';
+    openModal('settingsModal');
+}
+
+let authMode = 'login';
+
+function resetAuthMode() {
+    authMode = 'login';
+    document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
+    document.getElementById('authSubmitBtn').textContent = 'Masuk';
+    document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
+    document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
+    document.getElementById('authSwitchLink').textContent = 'Daftar';
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authPassword').value = '';
+}
+
+function switchAuthMode() {
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    document.getElementById('authError').classList.add('hidden');
+
+    if (authMode === 'signup') {
+        document.getElementById('authModeTitle').textContent = 'Daftar Akun Baru';
+        document.getElementById('authSubmitBtn').textContent = 'Daftar';
+        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleSignup()');
+        document.getElementById('authSwitchText').textContent = 'Sudah punya akun?';
+        document.getElementById('authSwitchLink').textContent = 'Masuk';
+    } else {
+        document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
+        document.getElementById('authSubmitBtn').textContent = 'Masuk';
+        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
+        document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
+        document.getElementById('authSwitchLink').textContent = 'Daftar';
+    }
+}
+
+async function openSettingsModal() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const statusEl = document.getElementById('settingsAccountStatus');
+    if (statusEl) statusEl.textContent = user ? user.email : 'Belum login';
+    openModal('settingsModal');
+}
+
 async function openAccountModal() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
@@ -306,6 +385,7 @@ async function openAccountModal() {
         document.getElementById('accountLoggedOutView').classList.remove('hidden');
         document.getElementById('accountLoggedInView').classList.add('hidden');
         document.getElementById('authError').classList.add('hidden');
+        resetAuthMode();
     }
     openModal('accountModal');
 }
@@ -351,7 +431,17 @@ async function syncFromCloudAfterLogin() {
 
     if (row && row.data) {
         state = row.data;
+    } else if (!state.ownerUserId || state.ownerUserId === user.id) {
+        state.ownerUserId = user.id;
+        await supabaseClient.from('user_data').upsert({
+            user_id: user.id,
+            data: state,
+            updated_at: new Date().toISOString()
+        });
     } else {
+        // Akun lain login di HP ini → wajib mulai bersih
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        state.ownerUserId = user.id;
         await supabaseClient.from('user_data').upsert({
             user_id: user.id,
             data: state,
