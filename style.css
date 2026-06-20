@@ -500,3 +500,5 @@ button { border: none; background: none; font-family: inherit; cursor: pointer; 
     width: 100%;
     max-width: 380px;
     }
+
+.header-actions { display: flex; gap: 4px; }
