@@ -436,4 +436,52 @@ button { border: none; background: none; font-family: inherit; cursor: pointer; 
     background: var(--bg-color);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
-                   }
+}
+
+.biz-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+.biz-product-item {
+    background: var(--bg-color);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.biz-product-item span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+}
+.biz-product-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    color: var(--text-primary);
+}
+.biz-product-icon i { width: 18px; height: 18px; }
+.biz-product-item.active {
+    background: var(--surface);
+    border-color: var(--accent);
+}
+.biz-product-item.active .biz-product-icon {
+    background: var(--accent);
+    color: var(--surface-dark);
+}
+.biz-product-item.active span {
+    color: var(--text-primary);
+    font-weight: 600;
+               }
