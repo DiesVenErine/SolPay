@@ -242,8 +242,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 function initAppState() {
     if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
-if (!state.purchaseLog) state.purchaseLog = [];
-    if (state.ownerUserId === undefined) state.ownerUserId = null;
+    if (!state.purchaseLog) state.purchaseLog = [];
 
     checkWeeklyReset();
 
@@ -390,10 +389,11 @@ async function syncFromCloudAfterLogin() {
         .eq('user_id', user.id)
         .maybeSingle();
 
+    const lastUserId = localStorage.getItem('solpay_last_user_id');
+
     if (row && row.data) {
         state = row.data;
-    } else if (!state.ownerUserId || state.ownerUserId === user.id) {
-        state.ownerUserId = user.id;
+    } else if (!lastUserId || lastUserId === user.id) {
         await supabaseClient.from('user_data').upsert({
             user_id: user.id,
             data: state,
@@ -402,7 +402,6 @@ async function syncFromCloudAfterLogin() {
     } else {
         // Akun lain login di HP ini → wajib mulai bersih
         state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-        state.ownerUserId = user.id;
         await supabaseClient.from('user_data').upsert({
             user_id: user.id,
             data: state,
@@ -410,6 +409,7 @@ async function syncFromCloudAfterLogin() {
         });
     }
 
+    localStorage.setItem('solpay_last_user_id', user.id);
     localStorage.setItem('solpay_data', JSON.stringify(state));
     initAppState();
 }
@@ -1501,17 +1501,33 @@ function checkStreak() {
     else badge.classList.add('hidden');
 }
 
-function processSoftReset() {
-    state.history = []; state.recapDoneWeekId = null;
-    saveData(); closeModal('settingsModal'); showSnackbar("Tracker & History cleared.");
+async function syncToCloudImmediate() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+    await supabaseClient.from('user_data').upsert({
+        user_id: user.id,
+        data: state,
+        updated_at: new Date().toISOString()
+    });
 }
 
-function processFullReset() {
+async function processSoftReset() {
+    state.history = []; state.recapDoneWeekId = null;
+    localStorage.setItem('solpay_data', JSON.stringify(state));
+    renderAll();
+    await syncToCloudImmediate();
+    closeModal('settingsModal');
+    showSnackbar("Tracker & History cleared.");
+}
+
+async function processFullReset() {
     localStorage.removeItem('solpay_data');
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-    saveData(); closeModal('fullResetModal');
+    localStorage.setItem('solpay_data', JSON.stringify(state));
+    renderAll();
+    await syncToCloudImmediate();
+    closeModal('fullResetModal');
 }
-
 
 function openWalletAction(cat) {
 
