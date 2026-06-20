@@ -19,14 +19,9 @@
                 <h1 class="premium-title">Sol<span class="text-accent">Pay</span></h1>
                 <p class="subtitle">Personal Finance OS</p>
             </div>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="openAccountModal()">
-                    <i data-lucide="user"></i>
-                </button>
-                <button class="icon-btn" onclick="openModal('settingsModal')">
-                    <i data-lucide="settings"></i>
-                </button>
-            </div>
+            <button class="icon-btn" onclick="openSettingsModal()">
+                <i data-lucide="menu"></i>
+            </button>
         </header>
 
         <section class="section-block">
@@ -557,6 +552,7 @@
             <h3 class="modal-title">Akun <span class="text-accent">SolPay</span></h3>
 
             <div id="accountLoggedOutView">
+                <h4 class="fw-600 mt-2" id="authModeTitle" style="font-size:16px;">Masuk ke Akun</h4>
                 <p class="subtext mt-2">Login biar data tersimpan di cloud, bisa diakses dari HP manapun. Tanpa login, data tetap aman tersimpan lokal di HP ini.</p>
                 <div class="form-group mt-3">
                     <label>Email</label>
@@ -567,8 +563,11 @@
                     <input type="password" id="authPassword" class="input-field" placeholder="">
                 </div>
                 <p id="authError" class="subtext text-red mt-2 hidden"></p>
-                <button class="btn-primary w-100 mt-3" onclick="handleLogin()">Masuk</button>
-                <button class="btn-ghost w-100 mt-2" onclick="handleSignup()">Daftar Baru</button>
+                <button class="btn-primary w-100 mt-3" id="authSubmitBtn" onclick="handleLogin()">Masuk</button>
+                <p class="subtext text-center mt-3">
+                    <span id="authSwitchText">Belum punya akun?</span>
+                    <span class="text-accent" style="cursor:pointer;font-weight:600;" onclick="switchAuthMode()" id="authSwitchLink">Daftar</span>
+                </p>
             </div>
 
             <div id="accountLoggedInView" class="hidden">
@@ -582,18 +581,24 @@
     <div class="modal-overlay" id="settingsModal" onclick="closeModal(this.id, event)">
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
-            <h3 class="modal-title">Settings</h3>
+          <h3 class="modal-title">Settings</h3>
+            <div class="flex-between mt-2" style="cursor:pointer;" onclick="openAccountModal()">
+                <div>
+                    <div class="subtext">Akun</div>
+                    <div class="fw-600" id="settingsAccountStatus" style="font-size:14px;">Belum login</div>
+                </div>
+                <i data-lucide="chevron-right"></i>
+            </div>
+            <hr class="elegant-hr">
             <button class="btn-ghost w-100 mt-3 text-left" onclick="initRecap(); closeModal('settingsModal')">
     <i data-lucide="bar-chart-2"></i> Weekly Recap (Manual)
 </button>
 <button class="btn-ghost w-100 mt-2 text-left" onclick="processSoftReset()">
     <i data-lucide="rotate-ccw"></i> Soft Reset (Clear Tracker/History)
 </button>
+
 <button class="btn-ghost w-100 mt-2 text-left text-red" onclick="openModal('fullResetModal')">
                 <i data-lucide="trash-2"></i> Full Reset Data
-            </button>
-            <button class="btn-ghost w-100 mt-2 text-left" onclick="handleLogout()">
-                <i data-lucide="log-out"></i> Logout
             </button>
         </div>
     </div>
