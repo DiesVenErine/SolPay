@@ -362,16 +362,38 @@
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
             <h3 class="modal-title">Side <span class="text-accent">Business</span></h3>
-            <div class="form-group">
+
+<div class="form-group">
                 <label>Produk</label>
-                <div class="custom-select-grid" id="group_bizProduct">
-                    <div class="select-pill active" data-val="quota" onclick="selectPill('bizProduct', 'quota')">📶 Quota</div>
-                    <div class="select-pill" data-val="ewallet" onclick="selectPill('bizProduct', 'ewallet')">💳 E-Wallet</div>
-                    <div class="select-pill" data-val="wd" onclick="selectPill('bizProduct', 'wd')">💵 Tarik Tunai</div>
-                    <div class="select-pill" data-val="token" onclick="selectPill('bizProduct', 'token')">⚡ Token</div>
+                <div class="biz-product-grid" id="group_bizProduct">
+                    <div class="biz-product-item select-pill active" data-val="transfer" onclick="selectPill('bizProduct', 'transfer')">
+                        <div class="biz-product-icon"><i data-lucide="send"></i></div>
+                        <span>Transfer</span>
+                    </div>
+                    <div class="biz-product-item select-pill" data-val="data" onclick="selectPill('bizProduct', 'data')">
+                        <div class="biz-product-icon"><i data-lucide="wifi"></i></div>
+                        <span>Paket Data</span>
+                    </div>
+                    <div class="biz-product-item select-pill" data-val="pulsa" onclick="selectPill('bizProduct', 'pulsa')">
+                        <div class="biz-product-icon"><i data-lucide="smartphone"></i></div>
+                        <span>Pulsa</span>
+                    </div>
+                    <div class="biz-product-item select-pill" data-val="pln" onclick="selectPill('bizProduct', 'pln')">
+                        <div class="biz-product-icon"><i data-lucide="zap"></i></div>
+                        <span>PLN</span>
+                    </div>
+                    <div class="biz-product-item select-pill" data-val="ewallet" onclick="selectPill('bizProduct', 'ewallet')">
+                        <div class="biz-product-icon"><i data-lucide="wallet"></i></div>
+                        <span>E-Wallet</span>
+                    </div>
+                    <div class="biz-product-item select-pill" data-val="game" onclick="selectPill('bizProduct', 'game')">
+                        <div class="biz-product-icon"><i data-lucide="gamepad-2"></i></div>
+                        <span>Top Up Game</span>
+                    </div>
                 </div>
-                <input type="hidden" id="bizProduct" value="quota">
+                <input type="hidden" id="bizProduct" value="transfer">
             </div>
+
             <div class="form-group">
                 <label>Harga Beli / Nominal (Rp)</label>
                 <input type="number" id="bizCapital" placeholder="0" inputmode="numeric" class="input-field" onkeyup="updateBizProfit()">
