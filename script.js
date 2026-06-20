@@ -240,14 +240,12 @@ const SUPABASE_KEY = 'sb_publishable_D7NPJ8o3riwDXWIefR8PpQ_yj82XsRg';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function initAppState() {
-    // Safety untuk data lama yang belum punya field baru
     if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
     if (!state.purchaseLog) state.purchaseLog = [];
 
     checkWeeklyReset();
 
-    // Auto-migrate old standalone receivables to grouped customer layout
     state.receivables = state.receivables.map(r => {
         if (r.capReimburse !== undefined) {
             return {
@@ -298,6 +296,20 @@ function showAuthError(msg, isSuccess) {
     el.classList.toggle('text-green', !!isSuccess);
 }
 
+async function openAccountModal() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (user) {
+        document.getElementById('accountLoggedOutView').classList.add('hidden');
+        document.getElementById('accountLoggedInView').classList.remove('hidden');
+        document.getElementById('accountEmailText').textContent = user.email;
+    } else {
+        document.getElementById('accountLoggedOutView').classList.remove('hidden');
+        document.getElementById('accountLoggedInView').classList.add('hidden');
+        document.getElementById('authError').classList.add('hidden');
+    }
+    openModal('accountModal');
+}
+
 async function handleLogin() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
@@ -305,7 +317,10 @@ async function handleLogin() {
 
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) { showAuthError(error.message); return; }
-    await enterApp();
+
+    await syncFromCloudAfterLogin();
+    closeModal('accountModal');
+    showSnackbar('Login berhasil ✨');
 }
 
 async function handleSignup() {
@@ -320,14 +335,13 @@ async function handleSignup() {
 
 async function handleLogout() {
     await supabaseClient.auth.signOut();
-    location.reload();
+    closeModal('accountModal');
+    showSnackbar('Logout berhasil. Data tetap aman tersimpan lokal di HP ini.');
 }
 
-async function enterApp() {
-    document.getElementById('authScreen').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-
+async function syncFromCloudAfterLogin() {
     const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
 
     const { data: row } = await supabaseClient
         .from('user_data')
@@ -338,8 +352,6 @@ async function enterApp() {
     if (row && row.data) {
         state = row.data;
     } else {
-        const saved = localStorage.getItem('solpay_data');
-        if (saved) state = JSON.parse(saved);
         await supabaseClient.from('user_data').upsert({
             user_id: user.id,
             data: state,
@@ -349,6 +361,10 @@ async function enterApp() {
 
     localStorage.setItem('solpay_data', JSON.stringify(state));
     initAppState();
+}
+
+async function syncFromCloudSilently() {
+    try { await syncFromCloudAfterLogin(); } catch (e) { console.log('Sync diam-diam gagal', e); }
 }
 
 function renderAll() {
@@ -1510,10 +1526,12 @@ function openWalletAction(cat) {
 }
 
 window.onload = async function() {
+    const saved = localStorage.getItem('solpay_data');
+    if (saved) state = JSON.parse(saved);
+    initAppState();
+
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        await enterApp();
-    }
+    if (session) await syncFromCloudSilently();
 };
 
 if ('serviceWorker' in navigator) {
