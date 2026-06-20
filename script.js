@@ -234,12 +234,14 @@ function repayBusinessDebt() {
 }
 
 // --- STORAGE & INIT ---
-function loadData() {
-    const saved = localStorage.getItem('solpay_data');
-    if (saved) state = JSON.parse(saved);
+// --- SUPABASE SETUP ---
+const SUPABASE_URL = 'https://lfmmjghzjfzsuyhaocgd.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_D7NPJ8o3riwDXWIefR8PpQ_yj82XsRg';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+function initAppState() {
     // Safety untuk data lama yang belum punya field baru
-if (!state.weeklyHistory) state.weeklyHistory = [];
+    if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
     if (!state.purchaseLog) state.purchaseLog = [];
 
@@ -267,9 +269,86 @@ if (!state.weeklyHistory) state.weeklyHistory = [];
     renderAll();
     checkRecapReminder();
 }
+
 function saveData() {
     localStorage.setItem('solpay_data', JSON.stringify(state));
     renderAll();
+    syncToCloud();
+}
+
+let syncTimeout;
+function syncToCloud() {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(async () => {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        await supabaseClient.from('user_data').upsert({
+            user_id: user.id,
+            data: state,
+            updated_at: new Date().toISOString()
+        });
+    }, 800);
+}
+
+function showAuthError(msg, isSuccess) {
+    const el = document.getElementById('authError');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    el.classList.toggle('text-red', !isSuccess);
+    el.classList.toggle('text-green', !!isSuccess);
+}
+
+async function handleLogin() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    if (!email || !password) { showAuthError('Isi email dan password dulu'); return; }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) { showAuthError(error.message); return; }
+    await enterApp();
+}
+
+async function handleSignup() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    if (!email || !password) { showAuthError('Isi email dan password dulu'); return; }
+
+    const { error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) { showAuthError(error.message); return; }
+    showAuthError('Berhasil daftar! Cek email buat verifikasi, lalu login.', true);
+}
+
+async function handleLogout() {
+    await supabaseClient.auth.signOut();
+    location.reload();
+}
+
+async function enterApp() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    const { data: row } = await supabaseClient
+        .from('user_data')
+        .select('data')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    if (row && row.data) {
+        state = row.data;
+    } else {
+        const saved = localStorage.getItem('solpay_data');
+        if (saved) state = JSON.parse(saved);
+        await supabaseClient.from('user_data').upsert({
+            user_id: user.id,
+            data: state,
+            updated_at: new Date().toISOString()
+        });
+    }
+
+    localStorage.setItem('solpay_data', JSON.stringify(state));
+    initAppState();
 }
 
 function renderAll() {
@@ -1430,7 +1509,12 @@ function openWalletAction(cat) {
     saveData();
 }
 
-window.onload = loadData;
+window.onload = async function() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        await enterApp();
+    }
+};
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
