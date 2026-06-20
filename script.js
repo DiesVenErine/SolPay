@@ -336,45 +336,6 @@ async function openSettingsModal() {
     openModal('settingsModal');
 }
 
-let authMode = 'login';
-
-function resetAuthMode() {
-    authMode = 'login';
-    document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
-    document.getElementById('authSubmitBtn').textContent = 'Masuk';
-    document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
-    document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
-    document.getElementById('authSwitchLink').textContent = 'Daftar';
-    document.getElementById('authEmail').value = '';
-    document.getElementById('authPassword').value = '';
-}
-
-function switchAuthMode() {
-    authMode = authMode === 'login' ? 'signup' : 'login';
-    document.getElementById('authError').classList.add('hidden');
-
-    if (authMode === 'signup') {
-        document.getElementById('authModeTitle').textContent = 'Daftar Akun Baru';
-        document.getElementById('authSubmitBtn').textContent = 'Daftar';
-        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleSignup()');
-        document.getElementById('authSwitchText').textContent = 'Sudah punya akun?';
-        document.getElementById('authSwitchLink').textContent = 'Masuk';
-    } else {
-        document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
-        document.getElementById('authSubmitBtn').textContent = 'Masuk';
-        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
-        document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
-        document.getElementById('authSwitchLink').textContent = 'Daftar';
-    }
-}
-
-async function openSettingsModal() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const statusEl = document.getElementById('settingsAccountStatus');
-    if (statusEl) statusEl.textContent = user ? user.email : 'Belum login';
-    openModal('settingsModal');
-}
-
 async function openAccountModal() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
