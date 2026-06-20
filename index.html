@@ -9,10 +9,32 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <div id="app">
+    <div id="authScreen" class="auth-screen">
+        <div class="auth-box">
+            <h1 class="premium-title">Sol<span class="text-accent">Pay</span></h1>
+            <p class="subtitle mt-2">Masuk untuk sinkronisasi data kamu</p>
+
+            <div class="form-group mt-4">
+                <label>Email</label>
+                <input type="email" id="authEmail" class="input-field" placeholder="">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="authPassword" class="input-field" placeholder="">
+            </div>
+
+            <p id="authError" class="subtext text-red mt-2 hidden"></p>
+
+            <button class="btn-primary w-100 mt-3" onclick="handleLogin()">Masuk</button>
+            <button class="btn-ghost w-100 mt-2" onclick="handleSignup()">Daftar Baru</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
         <header class="app-header">
             <div>
                 <h1 class="premium-title">Sol<span class="text-accent">Pay</span></h1>
@@ -555,8 +577,11 @@
 <button class="btn-ghost w-100 mt-2 text-left" onclick="processSoftReset()">
     <i data-lucide="rotate-ccw"></i> Soft Reset (Clear Tracker/History)
 </button>
-            <button class="btn-ghost w-100 mt-2 text-left text-red" onclick="openModal('fullResetModal')">
+<button class="btn-ghost w-100 mt-2 text-left text-red" onclick="openModal('fullResetModal')">
                 <i data-lucide="trash-2"></i> Full Reset Data
+            </button>
+            <button class="btn-ghost w-100 mt-2 text-left" onclick="handleLogout()">
+                <i data-lucide="log-out"></i> Logout
             </button>
         </div>
     </div>
