@@ -234,12 +234,10 @@ function repayBusinessDebt() {
 }
 
 // --- STORAGE & INIT ---
-// --- SUPABASE SETUP ---
-const SUPABASE_URL = 'https://lfmmjghzjfzsuyhaocgd.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_D7NPJ8o3riwDXWIefR8PpQ_yj82XsRg';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function loadData() {
+    const saved = localStorage.getItem('solpay_data');
+    if (saved) state = JSON.parse(saved);
 
-function initAppState() {
     if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
     if (!state.purchaseLog) state.purchaseLog = [];
@@ -271,152 +269,8 @@ function initAppState() {
 function saveData() {
     localStorage.setItem('solpay_data', JSON.stringify(state));
     renderAll();
-    syncToCloud();
 }
 
-let syncTimeout;
-function syncToCloud() {
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(async () => {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) return;
-        await supabaseClient.from('user_data').upsert({
-            user_id: user.id,
-            data: state,
-            updated_at: new Date().toISOString()
-        });
-    }, 800);
-}
-
-function showAuthError(msg, isSuccess) {
-    const el = document.getElementById('authError');
-    el.textContent = msg;
-    el.classList.remove('hidden');
-    el.classList.toggle('text-red', !isSuccess);
-    el.classList.toggle('text-green', !!isSuccess);
-}
-
-let authMode = 'login';
-
-function resetAuthMode() {
-    authMode = 'login';
-    document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
-    document.getElementById('authSubmitBtn').textContent = 'Masuk';
-    document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
-    document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
-    document.getElementById('authSwitchLink').textContent = 'Daftar';
-    document.getElementById('authEmail').value = '';
-    document.getElementById('authPassword').value = '';
-}
-
-function switchAuthMode() {
-    authMode = authMode === 'login' ? 'signup' : 'login';
-    document.getElementById('authError').classList.add('hidden');
-
-    if (authMode === 'signup') {
-        document.getElementById('authModeTitle').textContent = 'Daftar Akun Baru';
-        document.getElementById('authSubmitBtn').textContent = 'Daftar';
-        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleSignup()');
-        document.getElementById('authSwitchText').textContent = 'Sudah punya akun?';
-        document.getElementById('authSwitchLink').textContent = 'Masuk';
-    } else {
-        document.getElementById('authModeTitle').textContent = 'Masuk ke Akun';
-        document.getElementById('authSubmitBtn').textContent = 'Masuk';
-        document.getElementById('authSubmitBtn').setAttribute('onclick', 'handleLogin()');
-        document.getElementById('authSwitchText').textContent = 'Belum punya akun?';
-        document.getElementById('authSwitchLink').textContent = 'Daftar';
-    }
-}
-
-async function openSettingsModal() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const statusEl = document.getElementById('settingsAccountStatus');
-    if (statusEl) statusEl.textContent = user ? user.email : 'Belum login';
-    openModal('settingsModal');
-}
-
-async function openAccountModal() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (user) {
-        document.getElementById('accountLoggedOutView').classList.add('hidden');
-        document.getElementById('accountLoggedInView').classList.remove('hidden');
-        document.getElementById('accountEmailText').textContent = user.email;
-    } else {
-        document.getElementById('accountLoggedOutView').classList.remove('hidden');
-        document.getElementById('accountLoggedInView').classList.add('hidden');
-        document.getElementById('authError').classList.add('hidden');
-        resetAuthMode();
-    }
-    openModal('accountModal');
-}
-
-async function handleLogin() {
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-    if (!email || !password) { showAuthError('Isi email dan password dulu'); return; }
-
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) { showAuthError(error.message); return; }
-
-    await syncFromCloudAfterLogin();
-    closeModal('accountModal');
-    showSnackbar('Login berhasil ✨');
-}
-
-async function handleSignup() {
-    const email = document.getElementById('authEmail').value.trim();
-    const password = document.getElementById('authPassword').value;
-    if (!email || !password) { showAuthError('Isi email dan password dulu'); return; }
-
-    const { error } = await supabaseClient.auth.signUp({ email, password });
-    if (error) { showAuthError(error.message); return; }
-    showAuthError('Berhasil daftar! Cek email buat verifikasi, lalu login.', true);
-}
-
-async function handleLogout() {
-    await supabaseClient.auth.signOut();
-    closeModal('accountModal');
-    showSnackbar('Logout berhasil. Data tetap aman tersimpan lokal di HP ini.');
-}
-
-async function syncFromCloudAfterLogin() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) return;
-
-    const { data: row } = await supabaseClient
-        .from('user_data')
-        .select('data')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-    const lastUserId = localStorage.getItem('solpay_last_user_id');
-
-    if (row && row.data) {
-        state = row.data;
-    } else if (!lastUserId || lastUserId === user.id) {
-        await supabaseClient.from('user_data').upsert({
-            user_id: user.id,
-            data: state,
-            updated_at: new Date().toISOString()
-        });
-    } else {
-        // Akun lain login di HP ini → wajib mulai bersih
-        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-        await supabaseClient.from('user_data').upsert({
-            user_id: user.id,
-            data: state,
-            updated_at: new Date().toISOString()
-        });
-    }
-
-    localStorage.setItem('solpay_last_user_id', user.id);
-    localStorage.setItem('solpay_data', JSON.stringify(state));
-    initAppState();
-}
-
-async function syncFromCloudSilently() {
-    try { await syncFromCloudAfterLogin(); } catch (e) { console.log('Sync diam-diam gagal', e); }
-}
 
 function renderAll() {
     renderBalances();
@@ -1501,33 +1355,17 @@ function checkStreak() {
     else badge.classList.add('hidden');
 }
 
-async function syncToCloudImmediate() {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) return;
-    await supabaseClient.from('user_data').upsert({
-        user_id: user.id,
-        data: state,
-        updated_at: new Date().toISOString()
-    });
-}
-
-async function processSoftReset() {
+function processSoftReset() {
     state.history = []; state.recapDoneWeekId = null;
-    localStorage.setItem('solpay_data', JSON.stringify(state));
-    renderAll();
-    await syncToCloudImmediate();
-    closeModal('settingsModal');
-    showSnackbar("Tracker & History cleared.");
+    saveData(); closeModal('settingsModal'); showSnackbar("Tracker & History cleared.");
 }
 
-async function processFullReset() {
+function processFullReset() {
     localStorage.removeItem('solpay_data');
     state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-    localStorage.setItem('solpay_data', JSON.stringify(state));
-    renderAll();
-    await syncToCloudImmediate();
-    closeModal('fullResetModal');
+    saveData(); closeModal('fullResetModal');
 }
+
 
 function openWalletAction(cat) {
 
@@ -1592,14 +1430,7 @@ function openWalletAction(cat) {
     saveData();
 }
 
-window.onload = async function() {
-    const saved = localStorage.getItem('solpay_data');
-    if (saved) state = JSON.parse(saved);
-    initAppState();
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) await syncFromCloudSilently();
-};
+window.onload = loadData;
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
