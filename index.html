@@ -1,589 +1,2062 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SolPay OS</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1A1A1A">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
-
-    <div id="app">
-<header class="app-header">
-            <div>
-                <h1 class="premium-title">Sol<span class="text-accent">Pay</span></h1>
-                <p class="subtitle">Personal Finance OS</p>
-            </div>
-            
-            <button class="icon-btn" onclick="openModal('settingsModal')">
-                <i data-lucide="menu"></i>
-            </button>
-           
-        </header>
-
-        <section class="section-block">
-            <p class="section-label">Total <span class="text-accent">Balance</span></p>
-            <h2 class="total-wealth" id="totalWealth">Rp0</h2>
-        </section>
-
-<section class="balances-scroll">
-
-    <div class="balance-card dark-card">
-        <div class="card-header">
-            <span>Main <span class="text-accent" style="color:var(--accent-soft)">Balance</span></span>
-            <i data-lucide="wallet"></i>
-        </div>
-        <h3 id="mainBalanceTotal">Rp0</h3>
-        <div class="wallet-split">
-            <span>💵 Cash: <b id="mainCash">Rp0</b></span>
-            <span>💳 DANA: <b id="mainDana">Rp0</b></span>
-        </div>
-        <div class="card-mini-stats">
-            <div class="mini-stat">
-                <span class="mini-label">Masuk minggu ini</span>
-                <span class="mini-value text-green" id="mainWeekIncome">+Rp0</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Keluar minggu ini</span>
-                <span class="mini-value text-red" id="mainWeekExpense">-Rp0</span>
-            </div>
-        </div>
-        <div class="card-actions">
-            <button class="card-action-btn income" onclick="openPosAction('main', 'income')">+ Masuk</button>
-            <button class="card-action-btn expense" onclick="openPosAction('main', 'expense')">- Keluar</button>
-        </div>
-    </div>
-
-<div class="balance-card">
-        <div class="card-header">
-            <span><span class="text-accent">Fashion</span> Savings</span>
-            <div class="card-header-actions">
-                <button class="icon-btn-tiny" onclick="openPurchaseLog('fashion')"><i data-lucide="clipboard-list"></i></button>
-                <i data-lucide="shirt"></i>
-            </div>
-        </div>
-        <h3 id="fashionBalanceTotal">Rp0</h3>
-        <div class="wallet-split">
-            <span>💵 Cash: <b id="fashionCash">Rp0</b></span>
-            <span>💳 DANA: <b id="fashionDana">Rp0</b></span>
-        </div>
-        <div class="card-mini-stats">
-            <div class="mini-stat">
-                <span class="mini-label">Target terdekat</span>
-                <span class="mini-value text-accent" id="fashionGoalName">—</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Progress</span>
-                <span class="mini-value" id="fashionGoalProgress">—</span>
-            </div>
-        </div>
-        <div class="debt-info" id="fashionDebtInfo">Tidak ada pinjaman</div>
-        <div class="card-actions">
-            <button class="card-action-btn income" onclick="openPosAction('fashion', 'income')">+ Masuk</button>
-            <button class="card-action-btn expense" onclick="openPosAction('fashion', 'expense')">- Keluar</button>
-        </div>
-    </div>
-
-<div class="balance-card">
-        <div class="card-header">
-            <span><span class="text-accent">Skincare</span> Savings</span>
-            <div class="card-header-actions">
-                <button class="icon-btn-tiny" onclick="openPurchaseLog('skincare')"><i data-lucide="clipboard-list"></i></button>
-                <i data-lucide="sparkles"></i>
-            </div>
-        </div>
-        <h3 id="skincareBalanceTotal">Rp0</h3>
-        <div class="wallet-split">
-            <span>💵 Cash: <b id="skincareCash">Rp0</b></span>
-            <span>💳 DANA: <b id="skincareDana">Rp0</b></span>
-        </div>
-        <div class="card-mini-stats">
-            <div class="mini-stat">
-                <span class="mini-label">Target terdekat</span>
-                <span class="mini-value text-accent" id="skincareGoalName">—</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Progress</span>
-                <span class="mini-value" id="skincareGoalProgress">—</span>
-            </div>
-        </div>
-        <div class="debt-info" id="skincareDebtInfo">Tidak ada pinjaman</div>
-        <div class="card-actions">
-            <button class="card-action-btn income" onclick="openPosAction('skincare', 'income')">+ Masuk</button>
-            <button class="card-action-btn expense" onclick="openPosAction('skincare', 'expense')">- Keluar</button>
-        </div>
-    </div>
-
-    <div class="balance-card">
-        <div class="card-header">
-            <span>Business <span class="text-accent">Capital</span></span>
-            <i data-lucide="briefcase"></i>
-        </div>
-        <h3 id="businessBalanceTotal">Rp0</h3>
-        <div class="wallet-split">
-            <span>💵 Cash: <b id="businessCash">Rp0</b></span>
-            <span>💳 DANA: <b id="businessDana">Rp0</b></span>
-        </div>
-        <div class="card-mini-stats">
-            <div class="mini-stat">
-                <span class="mini-label">Profit minggu ini</span>
-                <span class="mini-value text-green" id="businessWeekProfit">+Rp0</span>
-            </div>
-            <div class="mini-stat">
-                <span class="mini-label">Piutang aktif</span>
-                <span class="mini-value text-accent" id="businessActiveDebt">Rp0</span>
-            </div>
-        </div>
-        <div class="debt-info" id="businessDebtInfo">Tidak ada pinjaman</div>
-        <div class="card-actions">
-            <button class="card-action-btn income" onclick="openPosAction('business', 'income')">+ Masuk</button>
-            <button class="card-action-btn expense" onclick="openPosAction('business', 'expense')">- Keluar</button>
-        </div>
-    </div>
-
-</section>
-
-        <section id="recapBanner" class="recap-banner hidden">
-            <div class="recap-text">
-                <i data-lucide="stars"></i>
-                <span>Weekly <span class="text-accent" style="color:var(--accent-soft)">Recap</span> is ready ✨</span>
-            </div>
-            <div class="recap-actions">
-                <button class="btn-ghost" onclick="hideRecapBanner()">Later</button>
-                <button class="btn-primary-small" onclick="initRecap()">Recap Now</button>
-            </div>
-        </section>
-
-        <section class="section-block">
-            <div class="flex-between">
-                <p class="section-label">Daily <span class="text-accent">Tracker</span></p>
-                <div class="streak-badge hidden" id="streakBadge">
-                    Consistent 0 Days ✨
-                </div>
-            </div>
-            
-            <div class="tracker-scroll" id="trackerScroll">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>SolPay OS</title>
+        <link rel="manifest" href="manifest.json" />
+        <meta name="theme-color" content="#1A1A1A" />
+        <link rel="apple-touch-icon" href="icon-192.png" />
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+    <body>
+        <div id="app">
+            <header class="app-header">
+                <div>
+                    <h1 class="premium-title">
+                        Sol<span class="text-accent">Pay</span>
+                    </h1>
+                    <p class="subtitle">Personal Finance OS</p>
                 </div>
 
-            <div class="quick-add-row"></div>
-            
-        </section>
+                <button class="icon-btn" onclick="openModal('settingsModal')">
+                    <i data-lucide="menu"></i>
+                </button>
+            </header>
 
-        <section class="section-block">
-            <p class="section-label">Recent <span class="text-accent">Activity</span></p>
-            <div class="activity-list" id="activityList">
+            <section class="section-block">
+                <p class="section-label">
+                    Total <span class="text-accent">Balance</span>
+                </p>
+                <h2
+                    class="total-wealth"
+                    onclick="openModal('wealthBreakdownModal')"
+                    style="cursor: pointer"
+                >
+                    <span id="totalWealth">Rp0</span
+                    ><span
+                        style="font-size: 14px; opacity: 0.4; margin-left: 6px"
+                        >▼</span
+                    >
+                </h2>
+            </section>
+
+            <section class="balances-scroll">
+                <div class="balance-card dark-card">
+                    <div class="card-header">
+                        <span
+                            >Main
+                            <span
+                                class="text-accent"
+                                style="color: var(--accent-soft)"
+                                >Balance</span
+                            ></span
+                        >
+                        <i data-lucide="wallet"></i>
+                    </div>
+                    <h3 id="mainBalanceTotal">Rp0</h3>
+                    <div class="wallet-split">
+                        <span
+                            ><i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Cash: <b id="mainCash">Rp0</b></span
+                        >
+                        <span
+                            ><i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Dana: <b id="mainDana">Rp0</b></span
+                        >
+                    </div>
+                    <div class="card-mini-stats">
+                        <div class="mini-stat">
+                            <span class="mini-label">Masuk minggu ini</span>
+                            <span
+                                class="mini-value text-green"
+                                id="mainWeekIncome"
+                                >+Rp0</span
+                            >
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Keluar minggu ini</span>
+                            <span
+                                class="mini-value text-red"
+                                id="mainWeekExpense"
+                                >-Rp0</span
+                            >
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button
+                            class="card-action-btn income"
+                            onclick="openPosAction('main', 'income')"
+                        >
+                            + Masuk
+                        </button>
+                        <button
+                            class="card-action-btn expense"
+                            onclick="openPosAction('main', 'expense')"
+                        >
+                            - Keluar
+                        </button>
+                    </div>
                 </div>
-        </section>
 
-        <section class="section-block">
-            <p class="section-label">Weekly <span class="text-accent">History</span></p>
-            <div id="weeklyHistoryList"></div>
-        </section>
+                <div class="balance-card">
+                    <div class="card-header">
+                        <span
+                            ><span class="text-accent">Fashion</span>
+                            Savings</span
+                        >
+                        <div class="card-header-actions">
+                            <button
+                                class="icon-btn-tiny"
+                                onclick="openPurchaseLog('fashion')"
+                            >
+                                <i data-lucide="clipboard-list"></i>
+                            </button>
+                            <i data-lucide="shirt"></i>
+                        </div>
+                    </div>
+                    <h3 id="fashionBalanceTotal">Rp0</h3>
+                    <div class="wallet-split">
+                        <span
+                            ><i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Cash: <b id="fashionCash">Rp0</b></span
+                        >
+                        <span
+                            ><i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Dana: <b id="fashionDana">Rp0</b></span
+                        >
+                    </div>
+                    <div class="card-mini-stats">
+                        <div class="mini-stat">
+                            <span class="mini-label">Target terdekat</span>
+                            <span
+                                class="mini-value text-accent"
+                                id="fashionGoalName"
+                                >—</span
+                            >
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Progress</span>
+                            <span class="mini-value" id="fashionGoalProgress"
+                                >—</span
+                            >
+                        </div>
+                    </div>
+                    <div class="debt-info" id="fashionDebtInfo">
+                        Tidak ada pinjaman
+                    </div>
+                    <div class="card-actions">
+                        <button
+                            class="card-action-btn income"
+                            onclick="openPosAction('fashion', 'income')"
+                        >
+                            + Masuk
+                        </button>
+                        <button
+                            class="card-action-btn expense"
+                            onclick="openPosAction('fashion', 'expense')"
+                        >
+                            - Keluar
+                        </button>
+                    </div>
+                </div>
 
-        <section class="section-block">
-            <div class="flex-between">
-                <p class="section-label">Savings <span class="text-accent">Goals</span></p>
-                <button class="icon-btn-small" onclick="openModal('addGoalModal')">
-                    <i data-lucide="plus"></i>
+                <div class="balance-card">
+                    <div class="card-header">
+                        <span
+                            ><span class="text-accent">Skincare</span>
+                            Savings</span
+                        >
+                        <div class="card-header-actions">
+                            <button
+                                class="icon-btn-tiny"
+                                onclick="openPurchaseLog('skincare')"
+                            >
+                                <i data-lucide="clipboard-list"></i>
+                            </button>
+                            <i data-lucide="sparkles"></i>
+                        </div>
+                    </div>
+                    <h3 id="skincareBalanceTotal">Rp0</h3>
+                    <div class="wallet-split">
+                        <span
+                            ><i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Cash: <b id="skincareCash">Rp0</b></span
+                        >
+                        <span
+                            ><i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Dana: <b id="skincareDana">Rp0</b></span
+                        >
+                    </div>
+                    <div class="card-mini-stats">
+                        <div class="mini-stat">
+                            <span class="mini-label">Target terdekat</span>
+                            <span
+                                class="mini-value text-accent"
+                                id="skincareGoalName"
+                                >—</span
+                            >
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Progress</span>
+                            <span class="mini-value" id="skincareGoalProgress"
+                                >—</span
+                            >
+                        </div>
+                    </div>
+                    <div class="debt-info" id="skincareDebtInfo">
+                        Tidak ada pinjaman
+                    </div>
+                    <div class="card-actions">
+                        <button
+                            class="card-action-btn income"
+                            onclick="openPosAction('skincare', 'income')"
+                        >
+                            + Masuk
+                        </button>
+                        <button
+                            class="card-action-btn expense"
+                            onclick="openPosAction('skincare', 'expense')"
+                        >
+                            - Keluar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="balance-card">
+                    <div class="card-header">
+                        <span
+                            >Business
+                            <span class="text-accent">Capital</span></span
+                        >
+                        <i data-lucide="briefcase"></i>
+                    </div>
+                    <h3 id="businessBalanceTotal">Rp0</h3>
+                    <div class="wallet-split">
+                        <span
+                            ><i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Cash: <b id="businessCash">Rp0</b></span
+                        >
+                        <span
+                            ><i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i>
+                            Dana: <b id="businessDana">Rp0</b></span
+                        >
+                    </div>
+                    <div class="card-mini-stats">
+                        <div class="mini-stat">
+                            <span class="mini-label">Profit minggu ini</span>
+                            <span
+                                class="mini-value text-green"
+                                id="businessWeekProfit"
+                                >+Rp0</span
+                            >
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Piutang aktif</span>
+                            <span
+                                class="mini-value text-accent"
+                                id="businessActiveDebt"
+                                >Rp0</span
+                            >
+                        </div>
+                    </div>
+                    <div class="debt-info" id="businessDebtInfo">
+                        Tidak ada pinjaman
+                    </div>
+                    <div class="card-actions">
+                        <button
+                            class="card-action-btn income"
+                            onclick="openPosAction('business', 'income')"
+                        >
+                            + Masuk
+                        </button>
+                        <button
+                            class="card-action-btn expense"
+                            onclick="openPosAction('business', 'expense')"
+                        >
+                            - Keluar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-block">
+                <p class="section-label">
+                    Celengan <span class="text-accent">Khusus</span>
+                </p>
+                <div class="piggy-scroll">
+                    <div class="piggy-card" onclick="openSolanaDetail()">
+                        <div class="piggy-card-header">
+                            <span class="piggy-badge">Terpisah</span>
+                            <i data-lucide="coins"></i>
+                        </div>
+                        <div class="piggy-card-title">Solana</div>
+                        <h3 id="piggySolanaExchange">Rp0</h3>
+                        <div class="cycle-ring-wrap-small">
+                            <div
+                                class="cycle-ring-small"
+                                id="piggySolanaRing"
+                                style="--pct: 0"
+                            ></div>
+                            <div
+                                class="cycle-ring-text-small"
+                                id="piggySolanaPct"
+                            >
+                                0%
+                            </div>
+                        </div>
+                        <div class="subtext mt-2" id="piggySolanaCycleLabel">
+                            Siklus: Rp0 / Rp150.000
+                        </div>
+                    </div>
+
+                    <div class="piggy-card" onclick="openFashionPiggyDetail()">
+                        <div class="piggy-card-header">
+                            <span class="piggy-badge">Terpisah</span>
+                            <i data-lucide="piggy-bank"></i>
+                        </div>
+                        <div class="piggy-card-title">Fashion Piggy</div>
+                        <h3 id="piggyFashionBalance">Rp0</h3>
+                        <div class="subtext mt-2">Cadangan dana fashion</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="recapBanner" class="recap-banner hidden">
+                <div class="recap-text">
+                    <i data-lucide="stars"></i>
+                    <span
+                        >Weekly
+                        <span
+                            class="text-accent"
+                            style="color: var(--accent-soft)"
+                            >Recap</span
+                        >
+                        is ready ✨</span
+                    >
+                </div>
+                <div class="recap-actions">
+                    <button class="btn-ghost" onclick="hideRecapBanner()">
+                        Later
+                    </button>
+                    <button class="btn-primary-small" onclick="initRecap()">
+                        Recap Now
+                    </button>
+                </div>
+            </section>
+
+            <section class="section-block">
+                <div class="flex-between">
+                    <p class="section-label">
+                        Daily <span class="text-accent">Tracker</span>
+                    </p>
+                    <div class="streak-badge hidden" id="streakBadge">
+                        Consistent 0 Days ✨
+                    </div>
+                </div>
+
+                <div class="tracker-scroll" id="trackerScroll"></div>
+
+                <div class="quick-add-row"></div>
+            </section>
+
+            <section class="section-block">
+                <p class="section-label">
+                    Recent <span class="text-accent">Activity</span>
+                </p>
+                <div class="activity-list" id="activityList"></div>
+            </section>
+
+            <section class="section-block">
+                <p class="section-label">
+                    Weekly <span class="text-accent">History</span>
+                </p>
+                <div id="weeklyHistoryList"></div>
+            </section>
+
+            <section class="section-block">
+                <div class="flex-between">
+                    <p class="section-label">
+                        Savings <span class="text-accent">Goals</span>
+                    </p>
+                    <button
+                        class="icon-btn-small"
+                        onclick="openModal('addGoalModal')"
+                    >
+                        <i data-lucide="plus"></i>
+                    </button>
+                </div>
+                <div id="goalsList" class="goals-list"></div>
+            </section>
+
+            <section class="section-block business-section">
+                <p class="section-label">
+                    Side <span class="text-accent">Business</span>
+                </p>
+                <div class="business-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Profit (Week)</span>
+                        <span class="stat-value text-green" id="bizProfit"
+                            >Rp0</span
+                        >
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Active Debt</span>
+                        <span class="stat-value text-accent" id="bizReceivable"
+                            >Rp0</span
+                        >
+                    </div>
+                </div>
+                <div class="receivables-list" id="receivablesList"></div>
+            </section>
+
+            <div style="height: 100px"></div>
+        </div>
+
+        <button class="fab" onclick="openModal('mainActionModal')">
+            <i data-lucide="plus"></i>
+        </button>
+
+        <div
+            class="modal-overlay"
+            id="mainActionModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    <span class="text-accent">Actions</span>
+                </h3>
+                <div class="action-grid">
+                    <button
+                        class="action-item"
+                        onclick="openModal('transferModal')"
+                    >
+                        <div class="action-icon">
+                            <i data-lucide="refresh-cw"></i>
+                        </div>
+                        <span>Transfer Saldo</span>
+                    </button>
+                    <button
+                        class="action-item"
+                        onclick="openModal('sideBusinessModal')"
+                    >
+                        <div class="action-icon">
+                            <i data-lucide="shopping-bag"></i>
+                        </div>
+                        <span>Side Business</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="addTransactionModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" id="trxModalTitle">Catat Transaksi</h3>
+                <div class="form-group">
+                    <label>Tipe</label>
+                    <div class="segmented-control">
+                        <button
+                            class="seg-btn active"
+                            id="btnExpense"
+                            onclick="setTrxType('expense')"
+                        >
+                            Pengeluaran
+                        </button>
+                        <button
+                            class="seg-btn"
+                            id="btnIncome"
+                            onclick="setTrxType('income')"
+                        >
+                            Pemasukan
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Keterangan</label>
+                    <input
+                        type="text"
+                        id="trxDesc"
+                        placeholder=""
+                        class="input-field"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Jumlah (Rp)</label>
+                    <input
+                        type="number"
+                        id="trxAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Dompet</label>
+                    <div class="custom-select-group" id="group_trxWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('trxWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('trxWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="trxWallet" value="cash" />
+                </div>
+
+                <div class="form-group mt-3">
+                    <div
+                        class="flex-between"
+                        style="cursor: pointer"
+                        onclick="togglePiggySection()"
+                    >
+                        <label style="margin: 0"
+                            >Sekalian Nabung ke Celengan?</label
+                        >
+                        <i data-lucide="chevron-down" id="piggyToggleIcon"></i>
+                    </div>
+                </div>
+                <div id="piggyQuickAddSection" class="hidden mt-2">
+                    <div class="form-group">
+                        <label>Solana (Rp)</label>
+                        <input
+                            type="number"
+                            id="trxPiggySolana"
+                            class="input-field"
+                            placeholder="0"
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Fashion Piggy (Rp)</label>
+                        <input
+                            type="number"
+                            id="trxPiggyFashion"
+                            class="input-field"
+                            placeholder="0"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="saveTransaction()"
+                >
+                    Simpan
                 </button>
             </div>
-            <div id="goalsList" class="goals-list">
-                </div>
-        </section>
+        </div>
 
-        <section class="section-block business-section">
-            <p class="section-label">Side <span class="text-accent">Business</span></p>
-            <div class="business-stats">
-                <div class="stat-box">
-                    <span class="stat-label">Profit (Week)</span>
-                    <span class="stat-value text-green" id="bizProfit">Rp0</span>
+        <div
+            class="modal-overlay"
+            id="transferModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="flex-between">
+                    <h3 class="modal-title">
+                        Transfer <span class="text-accent">Saldo</span>
+                    </h3>
+                    <button
+                        class="btn-ghost-small text-accent"
+                        onclick="toggleDebtMode()"
+                        id="debtToggleBtn"
+                    >
+                        Catat Hutang
+                    </button>
                 </div>
-                <div class="stat-box">
-                    <span class="stat-label">Active Debt</span>
-                    <span class="stat-value text-accent" id="bizReceivable">Rp0</span>
+                <p class="subtext" id="transferSubtext">
+                    Pindah uang antar dompet / tabungan.
+                </p>
+
+                <div class="form-group mt-3">
+                    <label>Dari (Sumber)</label>
+                    <div class="custom-select-grid" id="group_tfFromCat">
+                        <div
+                            class="select-pill active"
+                            data-val="main"
+                            onclick="selectPill('tfFromCat', 'main')"
+                        >
+                            Main
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="fashion"
+                            onclick="selectPill('tfFromCat', 'fashion')"
+                        >
+                            Fashion
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="skincare"
+                            onclick="selectPill('tfFromCat', 'skincare')"
+                        >
+                            Skincare
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="business"
+                            onclick="selectPill('tfFromCat', 'business')"
+                        >
+                            Business
+                        </div>
+                    </div>
+                    <input type="hidden" id="tfFromCat" value="main" />
+                    <div
+                        class="custom-select-group mt-2"
+                        id="group_tfFromWallet"
+                    >
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('tfFromWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('tfFromWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="tfFromWallet" value="cash" />
                 </div>
-            </div>
-            <div class="receivables-list" id="receivablesList">
+
+                <div class="form-group mt-3">
+                    <label>Ke (Tujuan)</label>
+                    <div class="custom-select-grid" id="group_tfToCat">
+                        <div
+                            class="select-pill"
+                            data-val="main"
+                            onclick="selectPill('tfToCat', 'main')"
+                        >
+                            Main
+                        </div>
+                        <div
+                            class="select-pill active"
+                            data-val="fashion"
+                            onclick="selectPill('tfToCat', 'fashion')"
+                        >
+                            Fashion
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="skincare"
+                            onclick="selectPill('tfToCat', 'skincare')"
+                        >
+                            Skincare
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="business"
+                            onclick="selectPill('tfToCat', 'business')"
+                        >
+                            Business
+                        </div>
+                    </div>
+                    <input type="hidden" id="tfToCat" value="fashion" />
+                    <div class="custom-select-group mt-2" id="group_tfToWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('tfToWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('tfToWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="tfToWallet" value="cash" />
                 </div>
-        </section>
 
-        <div style="height: 100px;"></div>
-    </div>
-
-    <button class="fab" onclick="openModal('mainActionModal')">
-        <i data-lucide="plus"></i>
-    </button>
-
-    <div class="modal-overlay" id="mainActionModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title"><span class="text-accent">Actions</span></h3>
-            <div class="action-grid">
-                <button class="action-item" onclick="openModal('addTransactionModal')">
-                    <div class="action-icon"><i data-lucide="arrow-right-left"></i></div>
-                    <span>Tambah Pengeluaran</span>
+                <div class="form-group">
+                    <label>Jumlah (Rp)</label>
+                    <input
+                        type="number"
+                        id="tfAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                </div>
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="processTransfer()"
+                >
+                    Transfer Saldo
                 </button>
-                <button class="action-item" onclick="openModal('transferModal')">
-                    <div class="action-icon"><i data-lucide="refresh-cw"></i></div>
-                    <span>Transfer Saldo</span>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="addExistingModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Manual <span class="text-accent">Adjustment</span>
+                </h3>
+                <div class="form-group">
+                    <label>Aksi</label>
+                    <div class="segmented-control">
+                        <button
+                            class="seg-btn active"
+                            id="btnAdjAdd"
+                            onclick="setAdjType('add')"
+                        >
+                            + Add Money
+                        </button>
+                        <button
+                            class="seg-btn"
+                            id="btnAdjReduce"
+                            onclick="setAdjType('reduce')"
+                        >
+                            - Reduce Money
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tujuan / Sumber</label>
+                    <div class="custom-select-grid" id="group_adjCat">
+                        <div
+                            class="select-pill active"
+                            data-val="main"
+                            onclick="selectPill('adjCat', 'main')"
+                        >
+                            Main
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="fashion"
+                            onclick="selectPill('adjCat', 'fashion')"
+                        >
+                            Fashion
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="skincare"
+                            onclick="selectPill('adjCat', 'skincare')"
+                        >
+                            Skincare
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="business"
+                            onclick="selectPill('adjCat', 'business')"
+                        >
+                            Business
+                        </div>
+                    </div>
+                    <input type="hidden" id="adjCat" value="main" />
+                </div>
+                <div class="form-group">
+                    <label>Dompet</label>
+                    <div class="custom-select-group" id="group_adjWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('adjWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('adjWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="adjWallet" value="cash" />
+                </div>
+                <div class="form-group">
+                    <label>Jumlah (Rp)</label>
+                    <input
+                        type="number"
+                        id="adjAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                </div>
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="processAdjustment()"
+                >
+                    Simpan
                 </button>
-                <button class="action-item" onclick="openModal('addExistingModal')">
-                    <div class="action-icon"><i data-lucide="plus-circle"></i></div>
-                    <span>Add Existing Money</span>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="sideBusinessModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Side <span class="text-accent">Business</span>
+                </h3>
+
+                <div class="form-group">
+                    <label>Produk</label>
+                    <div class="biz-product-grid" id="group_bizProduct">
+                        <div
+                            class="biz-product-item select-pill active"
+                            data-val="transfer"
+                            onclick="selectPill('bizProduct', 'transfer')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="send"></i>
+                            </div>
+                            <span>Transfer</span>
+                        </div>
+                        <div
+                            class="biz-product-item select-pill"
+                            data-val="data"
+                            onclick="selectPill('bizProduct', 'data')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="wifi"></i>
+                            </div>
+                            <span>Paket Data</span>
+                        </div>
+                        <div
+                            class="biz-product-item select-pill"
+                            data-val="pulsa"
+                            onclick="selectPill('bizProduct', 'pulsa')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="smartphone"></i>
+                            </div>
+                            <span>Pulsa</span>
+                        </div>
+                        <div
+                            class="biz-product-item select-pill"
+                            data-val="pln"
+                            onclick="selectPill('bizProduct', 'pln')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="zap"></i>
+                            </div>
+                            <span>PLN</span>
+                        </div>
+                        <div
+                            class="biz-product-item select-pill"
+                            data-val="ewallet"
+                            onclick="selectPill('bizProduct', 'ewallet')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="wallet"></i>
+                            </div>
+                            <span>E-Wallet</span>
+                        </div>
+                        <div
+                            class="biz-product-item select-pill"
+                            data-val="game"
+                            onclick="selectPill('bizProduct', 'game')"
+                        >
+                            <div class="biz-product-icon">
+                                <i data-lucide="gamepad-2"></i>
+                            </div>
+                            <span>Top Up Game</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="bizProduct" value="transfer" />
+                </div>
+
+                <div class="form-group">
+                    <label>Harga Beli / Nominal (Rp)</label>
+                    <input
+                        type="number"
+                        id="bizCapital"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                        onkeyup="updateBizProfit()"
+                    />
+                </div>
+                <div class="form-group">
+                    <label
+                        >Profit (Rp)
+                        <span class="text-accent" style="font-size: 12px"
+                            >— default otomatis, bisa diedit</span
+                        ></label
+                    >
+                    <input
+                        type="number"
+                        id="bizProfitInput"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                </div>
+                <div class="form-group mt-3">
+                    <label>Modal diambil dari (Capital)</label>
+                    <p class="subtext">
+                        <i
+                            data-lucide="credit-card"
+                            style="
+                                width: 12px;
+                                height: 12px;
+                                vertical-align: middle;
+                                margin-right: 4px;
+                            "
+                        ></i
+                        >Dana
+                    </p>
+                    <input type="hidden" id="bizFromWallet" value="dana" />
+                </div>
+                <div class="form-group">
+                    <label>Status Pembayaran</label>
+                    <div class="custom-select-group" id="group_bizStatus">
+                        <div
+                            class="select-pill active"
+                            data-val="paid"
+                            onclick="selectPill('bizStatus', 'paid')"
+                        >
+                            Lunas (Paid)
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="receivable"
+                            onclick="selectPill('bizStatus', 'receivable')"
+                        >
+                            Piutang (Hutang)
+                        </div>
+                    </div>
+                    <input type="hidden" id="bizStatus" value="paid" />
+                </div>
+                <div class="form-group" id="bizToWalletGroup">
+                    <label>Pelanggan bayar via</label>
+                    <div class="custom-select-group" id="group_bizToWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('bizToWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('bizToWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="bizToWallet" value="cash" />
+                </div>
+                <div class="form-group" id="bizNameGroup" style="display: none">
+                    <label
+                        >Nama Pelanggan (Gunakan nama yang sama untuk gabung
+                        hutang)</label
+                    >
+                    <input
+                        type="text"
+                        id="bizCustomer"
+                        class="input-field"
+                        placeholder=""
+                    />
+                </div>
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="processBusiness()"
+                >
+                    Simpan
                 </button>
-                <button class="action-item" onclick="openModal('sideBusinessModal')">
-                    <div class="action-icon"><i data-lucide="shopping-bag"></i></div>
-                    <span>Side Business</span>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="installmentModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Bayar <span class="text-accent">Cicilan</span>
+                </h3>
+                <p class="subtext" id="instCustomerName">Customer: -</p>
+
+                <div class="form-group mt-3">
+                    <label>Sisa Hutang</label>
+                    <div
+                        class="fw-600 text-red"
+                        id="instRemaining"
+                        style="font-size: 18px"
+                    >
+                        Rp0
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sudah Dibayar</label>
+                    <div
+                        class="fw-600 text-green"
+                        id="instPaid"
+                        style="font-size: 15px"
+                    >
+                        Rp0
+                    </div>
+                </div>
+
+                <div class="segmented-control mt-3" id="instModeToggle">
+                    <button
+                        class="seg-btn active"
+                        id="btnInstNew"
+                        onclick="setInstMode('new')"
+                    >
+                        + Bayar Baru
+                    </button>
+                    <button
+                        class="seg-btn"
+                        id="btnInstEdit"
+                        onclick="setInstMode('edit')"
+                    >
+                        ✏️ Koreksi
+                    </button>
+                </div>
+
+                <div class="form-group mt-3" id="instNewGroup">
+                    <label>Nominal Bayar (Rp)</label>
+                    <input
+                        type="number"
+                        id="instAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                </div>
+
+                <div
+                    class="form-group mt-3"
+                    id="instEditGroup"
+                    style="display: none"
+                >
+                    <label>Koreksi Total Paid jadi (Rp)</label>
+                    <input
+                        type="number"
+                        id="instEditAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
+                    <p class="subtext mt-2" style="color: var(--red)">
+                        ⚠️ Selisih akan ditarik balik dari saldo bisnis/main.
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Masuk ke Dompet</label>
+                    <div class="custom-select-group" id="group_instWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('instWallet', 'cash')"
+                        >
+                            💵 Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('instWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >DANA
+                        </div>
+                    </div>
+                    <input type="hidden" id="instWallet" value="cash" />
+                </div>
+
+                <input type="hidden" id="instDebtId" value="" />
+                <button
+                    class="btn-primary w-100 mt-4"
+                    id="instSubmitBtn"
+                    onclick="processInstallment()"
+                >
+                    Simpan Pembayaran
                 </button>
             </div>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="addTransactionModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title" id="trxModalTitle">Catat Transaksi</h3>
-            <div class="form-group">
-                <label>Tipe</label>
-                <div class="segmented-control">
-                    <button class="seg-btn active" id="btnExpense" onclick="setTrxType('expense')">Pengeluaran</button>
-                    <button class="seg-btn" id="btnIncome" onclick="setTrxType('income')">Pemasukan</button>
+        <div
+            class="modal-overlay"
+            id="addGoalModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Add <span class="text-accent">Goal</span>
+                </h3>
+                <div class="form-group">
+                    <label>Nama Barang</label>
+                    <input
+                        type="text"
+                        id="goalName"
+                        placeholder=""
+                        class="input-field"
+                    />
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Keterangan</label>
-                <input type="text" id="trxDesc" placeholder="" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Jumlah (Rp)</label>
-                <input type="number" id="trxAmount" placeholder="0" inputmode="numeric" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Dompet</label>
-                <div class="custom-select-group" id="group_trxWallet">
-                    <div class="select-pill active" data-val="cash" onclick="selectPill('trxWallet', 'cash')">💵 Cash</div>
-                    <div class="select-pill" data-val="dana" onclick="selectPill('trxWallet', 'dana')">💳 DANA</div>
+                <div class="form-group">
+                    <label>Target Harga (Rp)</label>
+                    <input
+                        type="number"
+                        id="goalAmount"
+                        placeholder="0"
+                        inputmode="numeric"
+                        class="input-field"
+                    />
                 </div>
-                <input type="hidden" id="trxWallet" value="cash">
+                <div class="form-group">
+                    <label>Kategori Tabungan</label>
+                    <div class="custom-select-group" id="group_goalCategory">
+                        <div
+                            class="select-pill active"
+                            data-val="fashion"
+                            onclick="selectPill('goalCategory', 'fashion')"
+                        >
+                            Fashion
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="skincare"
+                            onclick="selectPill('goalCategory', 'skincare')"
+                        >
+                            Skincare
+                        </div>
+                    </div>
+                    <input type="hidden" id="goalCategory" value="fashion" />
+                </div>
+                <button class="btn-primary w-100 mt-4" onclick="saveGoal()">
+                    Simpan
+                </button>
             </div>
-            <button class="btn-primary w-100 mt-4" onclick="saveTransaction()">Simpan</button>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="transferModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <div class="flex-between">
-                <h3 class="modal-title">Transfer <span class="text-accent">Saldo</span></h3>
-                <button class="btn-ghost-small text-accent" onclick="toggleDebtMode()" id="debtToggleBtn">Catat Hutang</button>
+        <div
+            class="modal-overlay"
+            id="purchaseLogModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" id="purchaseLogTitle">
+                    Riwayat <span class="text-accent">Pembelian</span>
+                </h3>
+                <p class="subtext mt-2">
+                    Tercatat otomatis tiap kali kamu catat pengeluaran di
+                    kategori ini.
+                </p>
+                <div id="purchaseLogList" class="purchase-log-list mt-3"></div>
             </div>
-            <p class="subtext" id="transferSubtext">Pindah uang antar dompet / tabungan.</p>
-            
-            <div class="form-group mt-3">
-                <label>Dari (Sumber)</label>
-                <div class="custom-select-grid" id="group_tfFromCat">
-                    <div class="select-pill active" data-val="main" onclick="selectPill('tfFromCat', 'main')">Main</div>
-                    <div class="select-pill" data-val="fashion" onclick="selectPill('tfFromCat', 'fashion')">Fashion</div>
-                    <div class="select-pill" data-val="skincare" onclick="selectPill('tfFromCat', 'skincare')">Skincare</div>
-                    <div class="select-pill" data-val="business" onclick="selectPill('tfFromCat', 'business')">Business</div>
-                </div>
-                <input type="hidden" id="tfFromCat" value="main">
-                <div class="custom-select-group mt-2" id="group_tfFromWallet">
-                    <div class="select-pill active" data-val="cash" onclick="selectPill('tfFromWallet', 'cash')">💵 Cash</div>
-                    <div class="select-pill" data-val="dana" onclick="selectPill('tfFromWallet', 'dana')">💳 DANA</div>
-                </div>
-                <input type="hidden" id="tfFromWallet" value="cash">
-            </div>
-            
-            <div class="form-group mt-3">
-                <label>Ke (Tujuan)</label>
-                <div class="custom-select-grid" id="group_tfToCat">
-                    <div class="select-pill" data-val="main" onclick="selectPill('tfToCat', 'main')">Main</div>
-                    <div class="select-pill active" data-val="fashion" onclick="selectPill('tfToCat', 'fashion')">Fashion</div>
-                    <div class="select-pill" data-val="skincare" onclick="selectPill('tfToCat', 'skincare')">Skincare</div>
-                    <div class="select-pill" data-val="business" onclick="selectPill('tfToCat', 'business')">Business</div>
-                </div>
-                <input type="hidden" id="tfToCat" value="fashion">
-                <div class="custom-select-group mt-2" id="group_tfToWallet">
-                    <div class="select-pill active" data-val="cash" onclick="selectPill('tfToWallet', 'cash')">💵 Cash</div>
-                    <div class="select-pill" data-val="dana" onclick="selectPill('tfToWallet', 'dana')">💳 DANA</div>
-                </div>
-                <input type="hidden" id="tfToWallet" value="cash">
-            </div>
-
-            <div class="form-group">
-                <label>Jumlah (Rp)</label>
-                <input type="number" id="tfAmount" placeholder="0" inputmode="numeric" class="input-field">
-            </div>
-            <button class="btn-primary w-100 mt-4" onclick="processTransfer()">Transfer Saldo</button>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="addExistingModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title">Manual <span class="text-accent">Adjustment</span></h3>
-            <div class="form-group">
-                <label>Aksi</label>
-                <div class="segmented-control">
-                    <button class="seg-btn active" id="btnAdjAdd" onclick="setAdjType('add')">+ Add Money</button>
-                    <button class="seg-btn" id="btnAdjReduce" onclick="setAdjType('reduce')">- Reduce Money</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Tujuan / Sumber</label>
-                <div class="custom-select-grid" id="group_adjCat">
-                    <div class="select-pill active" data-val="main" onclick="selectPill('adjCat', 'main')">Main</div>
-                    <div class="select-pill" data-val="fashion" onclick="selectPill('adjCat', 'fashion')">Fashion</div>
-                    <div class="select-pill" data-val="skincare" onclick="selectPill('adjCat', 'skincare')">Skincare</div>
-                    <div class="select-pill" data-val="business" onclick="selectPill('adjCat', 'business')">Business</div>
-                </div>
-                <input type="hidden" id="adjCat" value="main">
-            </div>
-            <div class="form-group">
-                <label>Dompet</label>
-                <div class="custom-select-group" id="group_adjWallet">
-                    <div class="select-pill active" data-val="cash" onclick="selectPill('adjWallet', 'cash')">💵 Cash</div>
-                    <div class="select-pill" data-val="dana" onclick="selectPill('adjWallet', 'dana')">💳 DANA</div>
-                </div>
-                <input type="hidden" id="adjWallet" value="cash">
-            </div>
-            <div class="form-group">
-                <label>Jumlah (Rp)</label>
-                <input type="number" id="adjAmount" placeholder="0" inputmode="numeric" class="input-field">
-            </div>
-            <button class="btn-primary w-100 mt-4" onclick="processAdjustment()">Simpan</button>
-        </div>
-    </div>
+        <div
+            class="modal-overlay"
+            id="solanaDetailModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Celengan <span class="text-accent">Solana</span>
+                </h3>
 
-    <div class="modal-overlay" id="sideBusinessModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title">Side <span class="text-accent">Business</span></h3>
+                <div class="text-center mt-2">
+                    <p class="subtext">Saldo Exchange (Total)</p>
+                    <h2 style="font-size: 32px" id="solExchangeBig">Rp0</h2>
+                </div>
 
-<div class="form-group">
-                <label>Produk</label>
-                <div class="biz-product-grid" id="group_bizProduct">
-                    <div class="biz-product-item select-pill active" data-val="transfer" onclick="selectPill('bizProduct', 'transfer')">
-                        <div class="biz-product-icon"><i data-lucide="send"></i></div>
-                        <span>Transfer</span>
+                <div
+                    class="flex-between mt-4"
+                    style="justify-content: center; gap: 24px"
+                >
+                    <div class="cycle-ring-wrap">
+                        <div
+                            class="cycle-ring"
+                            id="solCycleRing"
+                            style="--pct: 0"
+                        ></div>
+                        <div class="cycle-ring-text" id="solCyclePctText">
+                            0%
+                        </div>
                     </div>
-                    <div class="biz-product-item select-pill" data-val="data" onclick="selectPill('bizProduct', 'data')">
-                        <div class="biz-product-icon"><i data-lucide="wifi"></i></div>
-                        <span>Paket Data</span>
-                    </div>
-                    <div class="biz-product-item select-pill" data-val="pulsa" onclick="selectPill('bizProduct', 'pulsa')">
-                        <div class="biz-product-icon"><i data-lucide="smartphone"></i></div>
-                        <span>Pulsa</span>
-                    </div>
-                    <div class="biz-product-item select-pill" data-val="pln" onclick="selectPill('bizProduct', 'pln')">
-                        <div class="biz-product-icon"><i data-lucide="zap"></i></div>
-                        <span>PLN</span>
-                    </div>
-                    <div class="biz-product-item select-pill" data-val="ewallet" onclick="selectPill('bizProduct', 'ewallet')">
-                        <div class="biz-product-icon"><i data-lucide="wallet"></i></div>
-                        <span>E-Wallet</span>
-                    </div>
-                    <div class="biz-product-item select-pill" data-val="game" onclick="selectPill('bizProduct', 'game')">
-                        <div class="biz-product-icon"><i data-lucide="gamepad-2"></i></div>
-                        <span>Top Up Game</span>
+                    <div>
+                        <p class="subtext">Siklus saat ini</p>
+                        <p
+                            class="fw-600"
+                            id="solCycleAmountText"
+                            style="font-size: 18px"
+                        >
+                            Rp0 / Rp150.000
+                        </p>
+                        <p class="subtext mt-2" id="solCycleDaysText">
+                            Hari ke-1 dari 30
+                        </p>
+                        <p
+                            class="subtext text-accent hidden"
+                            id="solCarriedText"
+                        ></p>
                     </div>
                 </div>
-                <input type="hidden" id="bizProduct" value="transfer">
-            </div>
 
-            <div class="form-group">
-                <label>Harga Beli / Nominal (Rp)</label>
-                <input type="number" id="bizCapital" placeholder="0" inputmode="numeric" class="input-field" onkeyup="updateBizProfit()">
-            </div>
-<div class="form-group">
-    <label>Profit (Rp) <span class="text-accent" style="font-size:12px;">— default otomatis, bisa diedit</span></label>
-    <input type="number" id="bizProfitInput" placeholder="0" inputmode="numeric" class="input-field">
-</div>
-<div class="form-group mt-3">
-                <label>Modal diambil dari (Capital)</label>
-                <p class="subtext">💳 DANA (otomatis)</p>
-                <input type="hidden" id="bizFromWallet" value="dana">
-            </div>
-            <div class="form-group">
-                <label>Status Pembayaran</label>
-                <div class="custom-select-group" id="group_bizStatus">
-                    <div class="select-pill active" data-val="paid" onclick="selectPill('bizStatus', 'paid')">Lunas (Paid)</div>
-                    <div class="select-pill" data-val="receivable" onclick="selectPill('bizStatus', 'receivable')">Piutang (Hutang)</div>
+                <div class="recap-summary mt-4">
+                    <div class="summary-row">
+                        <span>Belum Ditop Up</span>
+                        <b class="text-accent" id="solPendingText">Rp0</b>
+                    </div>
                 </div>
-                <input type="hidden" id="bizStatus" value="paid">
-            </div>
-            <div class="form-group" id="bizToWalletGroup">
-                <label>Pelanggan bayar via</label>
-                <div class="custom-select-group" id="group_bizToWallet">
-                    <div class="select-pill active" data-val="cash" onclick="selectPill('bizToWallet', 'cash')">💵 Cash</div>
-                    <div class="select-pill" data-val="dana" onclick="selectPill('bizToWallet', 'dana')">💳 DANA</div>
+
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="openSolanaTopupPrompt()"
+                >
+                    <i data-lucide="arrow-up-circle"></i> Top Up ke Exchange
+                </button>
+
+                <hr class="elegant-hr" />
+
+                <p class="section-label">Edit Saldo (Koreksi Manual)</p>
+                <div class="form-group">
+                    <label>Saldo Exchange (Rp)</label>
+                    <input
+                        type="number"
+                        id="solExchangeEditInput"
+                        class="input-field"
+                        placeholder="0"
+                    />
                 </div>
-                <input type="hidden" id="bizToWallet" value="cash">
-            </div>
-            <div class="form-group" id="bizNameGroup" style="display:none;">
-                <label>Nama Pelanggan (Gunakan nama yang sama untuk gabung hutang)</label>
-                <input type="text" id="bizCustomer" class="input-field" placeholder="">
-            </div>
-            <button class="btn-primary w-100 mt-4" onclick="processBusiness()">Simpan</button>
-        </div>
-    </div>
-
-<div class="modal-overlay" id="installmentModal" onclick="closeModal(this.id, event)">
-    <div class="bottom-sheet">
-        <div class="sheet-handle"></div>
-        <h3 class="modal-title">Bayar <span class="text-accent">Cicilan</span></h3>
-        <p class="subtext" id="instCustomerName">Customer: -</p>
-
-        <div class="form-group mt-3">
-            <label>Sisa Hutang</label>
-            <div class="fw-600 text-red" id="instRemaining" style="font-size: 18px;">Rp0</div>
-        </div>
-
-        <div class="form-group">
-            <label>Sudah Dibayar</label>
-            <div class="fw-600 text-green" id="instPaid" style="font-size: 15px;">Rp0</div>
-        </div>
-
-        <div class="segmented-control mt-3" id="instModeToggle">
-            <button class="seg-btn active" id="btnInstNew" onclick="setInstMode('new')">+ Bayar Baru</button>
-            <button class="seg-btn" id="btnInstEdit" onclick="setInstMode('edit')">✏️ Koreksi</button>
-        </div>
-
-        <div class="form-group mt-3" id="instNewGroup">
-            <label>Nominal Bayar (Rp)</label>
-            <input type="number" id="instAmount" placeholder="0" inputmode="numeric" class="input-field">
-        </div>
-
-        <div class="form-group mt-3" id="instEditGroup" style="display:none;">
-            <label>Koreksi Total Paid jadi (Rp)</label>
-            <input type="number" id="instEditAmount" placeholder="0" inputmode="numeric" class="input-field">
-            <p class="subtext mt-2" style="color:var(--red);">⚠️ Selisih akan ditarik balik dari saldo bisnis/main.</p>
-        </div>
-
-        <div class="form-group">
-            <label>Masuk ke Dompet</label>
-            <div class="custom-select-group" id="group_instWallet">
-                <div class="select-pill active" data-val="cash" onclick="selectPill('instWallet', 'cash')">💵 Cash</div>
-                <div class="select-pill" data-val="dana" onclick="selectPill('instWallet', 'dana')">💳 DANA</div>
-            </div>
-            <input type="hidden" id="instWallet" value="cash">
-        </div>
-
-        <input type="hidden" id="instDebtId" value="">
-        <button class="btn-primary w-100 mt-4" id="instSubmitBtn" onclick="processInstallment()">Simpan Pembayaran</button>
-    </div>
-</div>
-
-    <div class="modal-overlay" id="addGoalModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title">Add <span class="text-accent">Goal</span></h3>
-            <div class="form-group">
-                <label>Nama Barang</label>
-                <input type="text" id="goalName" placeholder="" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Target Harga (Rp)</label>
-                <input type="number" id="goalAmount" placeholder="0" inputmode="numeric" class="input-field">
-            </div>
-            <div class="form-group">
-                <label>Kategori Tabungan</label>
-                <div class="custom-select-group" id="group_goalCategory">
-                    <div class="select-pill active" data-val="fashion" onclick="selectPill('goalCategory', 'fashion')">Fashion</div>
-                    <div class="select-pill" data-val="skincare" onclick="selectPill('goalCategory', 'skincare')">Skincare</div>
+                <div class="form-group">
+                    <label>Saldo Siklus Saat Ini (Rp)</label>
+                    <input
+                        type="number"
+                        id="solCycleAmountEditInput"
+                        class="input-field"
+                        placeholder="0"
+                    />
                 </div>
-                <input type="hidden" id="goalCategory" value="fashion">
-            </div>
-            <button class="btn-primary w-100 mt-4" onclick="saveGoal()">Simpan</button>
-        </div>
-    </div>
-
-<div class="modal-overlay" id="purchaseLogModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title" id="purchaseLogTitle">Riwayat <span class="text-accent">Pembelian</span></h3>
-            <p class="subtext mt-2">Tercatat otomatis tiap kali kamu catat pengeluaran di kategori ini.</p>
-            <div id="purchaseLogList" class="purchase-log-list mt-3"></div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="recapPreviewModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title"><span class="text-accent">Weekly Recap</span> Preview ✨</h3>
-            <div class="recap-summary">
-                <div class="summary-row">
-                    <span>Weekly Collected</span>
-                    <b id="recapCollected">Rp0</b>
+                <div class="form-group">
+                    <label>Saldo Belum Ditop Up (Rp)</label>
+                    <input
+                        type="number"
+                        id="solPendingEditInput"
+                        class="input-field"
+                        placeholder="0"
+                    />
                 </div>
-                <div class="summary-row sub">
-                    <span>Base Split (50:50)</span>
-                    <span id="recapBase">Rp0 Fashion / Rp0 Skincare</span>
+                <button
+                    class="btn-ghost w-100"
+                    onclick="saveSolanaBalanceEdit()"
+                >
+                    Simpan Koreksi Saldo
+                </button>
+
+                <hr class="elegant-hr" />
+
+                <div class="form-group">
+                    <label>Target per Siklus (Rp)</label>
+                    <input
+                        type="number"
+                        id="solCycleTargetInput"
+                        class="input-field"
+                        placeholder="150000"
+                    />
                 </div>
-                <div id="recapDebtRow" class="summary-row text-accent hidden">
-                    <span>Debt Adjustment</span>
-                    <span id="recapDebtText"></span>
+                <div class="form-group">
+                    <label>Minimal Nabung Harian (Rp)</label>
+                    <input
+                        type="number"
+                        id="solMinDepositInput"
+                        class="input-field"
+                        placeholder="5000"
+                    />
                 </div>
-                <hr class="elegant-hr">
-                <div class="summary-row">
-                    <span>Final Fashion</span>
-                    <b id="recapFinalFashion" class="text-green">Rp0</b>
+                <div class="form-group">
+                    <label>Tanggal Mulai Siklus</label>
+                    <input
+                        type="date"
+                        id="solCycleStartInput"
+                        class="input-field"
+                    />
                 </div>
-                <div class="summary-row">
-                    <span>Final Skincare</span>
-                    <b id="recapFinalSkincare" class="text-green">Rp0</b>
-                </div>
-            </div>
-            <p class="subtext text-center mt-3">Main balance will become 0 and move to savings.</p>
-            <div class="flex-gap mt-4">
-                <button class="btn-ghost w-50" onclick="closeModal('recapPreviewModal')">Cancel</button>
-                <button class="btn-primary w-50" onclick="confirmRecap()">Confirm Recap</button>
-            </div>
-        </div>
-    </div>
+                <button class="btn-ghost w-100" onclick="saveSolanaSettings()">
+                    Simpan Pengaturan
+                </button>
 
+                <hr class="elegant-hr" />
 
+                <p class="section-label">Riwayat Nabung &amp; Top Up</p>
+                <div id="solanaHistoryList" class="purchase-log-list"></div>
 
-    <div class="modal-overlay" id="settingsModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-<h3 class="modal-title">Settings</h3>
-            <button class="btn-ghost w-100 mt-3 text-left" onclick="initRecap(); closeModal('settingsModal')">
-    <i data-lucide="bar-chart-2"></i> Weekly Recap (Manual)
-</button>
-<button class="btn-ghost w-100 mt-2 text-left" onclick="processSoftReset()">
-    <i data-lucide="rotate-ccw"></i> Soft Reset (Clear Tracker/History)
-</button>
-
-<button class="btn-ghost w-100 mt-2 text-left text-red" onclick="openModal('fullResetModal')">
-                <i data-lucide="trash-2"></i> Full Reset Data
-            </button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="fullResetModal" onclick="closeModal(this.id, event)">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <h3 class="modal-title text-red">Warning</h3>
-            <p class="subtext mt-2">This will delete EVERYTHING permanently. Balances, history, goals. Are you absolutely sure?</p>
-            <div class="flex-gap mt-4">
-                <button class="btn-ghost w-50" onclick="closeModal('fullResetModal')">Cancel</button>
-                <button class="btn-primary w-50 bg-red" onclick="processFullReset()">Yes, Delete All</button>
+                <p class="section-label mt-3">Riwayat Siklus (30 Hari)</p>
+                <div
+                    id="solanaCycleHistoryList"
+                    class="purchase-log-list"
+                ></div>
             </div>
         </div>
-    </div>
 
-    <div id="snackbar" class="snackbar">
-        <span id="snackbarMsg">Transaction removed</span>
-        <button id="snackbarAction" class="snackbar-btn">Undo</button>
-    </div>
+        <div
+            class="modal-overlay"
+            id="solanaTopupModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Top Up ke <span class="text-accent">Exchange</span>
+                </h3>
+                <p class="subtext">Tersedia: <b id="topupAvailable">Rp0</b></p>
+                <div class="form-group mt-3">
+                    <label>Nominal Top Up (Rp)</label>
+                    <input
+                        type="number"
+                        id="topupAmount"
+                        class="input-field"
+                        placeholder="0"
+                    />
+                </div>
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="processSolanaTopup()"
+                >
+                    Konfirmasi Top Up
+                </button>
+            </div>
+        </div>
 
-    <script src="script.js"></script>
-</body>
+        <div
+            class="modal-overlay"
+            id="fashionPiggyModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Celengan <span class="text-accent">Fashion</span>
+                </h3>
+                <div class="text-center mt-2">
+                    <p class="subtext">Saldo Cadangan</p>
+                    <h2 style="font-size: 32px" id="fashionPiggyBig">Rp0</h2>
+                </div>
+
+                <div
+                    class="action-grid mt-3"
+                    style="grid-template-columns: 1fr 1fr"
+                >
+                    <button
+                        class="btn-primary"
+                        onclick="adjustFashionPiggy('add')"
+                    >
+                        + Nabung
+                    </button>
+                    <button
+                        class="btn-ghost"
+                        onclick="adjustFashionPiggy('reduce')"
+                    >
+                        - Pakai
+                    </button>
+                </div>
+
+                <hr class="elegant-hr" />
+                <div class="form-group">
+                    <label>Minimal Nabung Harian (Rp)</label>
+                    <input
+                        type="number"
+                        id="fashionMinDepositInput"
+                        class="input-field"
+                        placeholder="3000"
+                    />
+                </div>
+                <button
+                    class="btn-ghost w-100"
+                    onclick="saveFashionPiggySettings()"
+                >
+                    Simpan Pengaturan
+                </button>
+
+                <hr class="elegant-hr" />
+                <p class="section-label">Riwayat</p>
+                <div
+                    id="fashionPiggyHistoryList"
+                    class="purchase-log-list"
+                ></div>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="fashionPiggyAdjustModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" id="fashionAdjustTitle">
+                    Nabung ke Celengan
+                </h3>
+                <div class="form-group mt-3">
+                    <label>Nominal (Rp)</label>
+                    <input
+                        type="number"
+                        id="fashionAdjustAmount"
+                        class="input-field"
+                        placeholder="0"
+                    />
+                </div>
+                <input type="hidden" id="fashionAdjustType" value="add" />
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="processFashionPiggyAdjust()"
+                >
+                    Simpan
+                </button>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="solanaDetailModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Celengan <span class="text-accent">Solana</span>
+                </h3>
+
+                <div class="text-center mt-2">
+                    <p class="subtext">Saldo Exchange (Total)</p>
+                    <h2 style="font-size: 32px" id="solExchangeBig">Rp0</h2>
+                </div>
+
+                <div
+                    class="flex-between mt-4"
+                    style="justify-content: center; gap: 24px"
+                >
+                    <div class="cycle-ring-wrap">
+                        <div
+                            class="cycle-ring"
+                            id="solCycleRing"
+                            style="--pct: 0"
+                        ></div>
+                        <div class="cycle-ring-text" id="solCyclePctText">
+                            0%
+                        </div>
+                    </div>
+                    <div>
+                        <p class="subtext">Siklus saat ini</p>
+                        <p
+                            class="fw-600"
+                            id="solCycleAmountText"
+                            style="font-size: 18px"
+                        >
+                            Rp0 / Rp150.000
+                        </p>
+                        <p class="subtext mt-2" id="solCycleDaysText">
+                            Hari ke-1 dari 30
+                        </p>
+                        <p
+                            class="subtext text-accent hidden"
+                            id="solCarriedText"
+                        ></p>
+                    </div>
+                </div>
+
+                <div class="recap-summary mt-4">
+                    <div class="summary-row">
+                        <span>Belum Ditop Up</span>
+                        <b class="text-accent" id="solPendingText">Rp0</b>
+                    </div>
+                </div>
+
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="openSolanaTopupPrompt()"
+                >
+                    <i data-lucide="arrow-up-circle"></i> Top Up ke Exchange
+                </button>
+
+                <hr class="elegant-hr" />
+
+                <div class="form-group">
+                    <label>Target per Siklus (Rp)</label>
+                    <input
+                        type="number"
+                        id="solCycleTargetInput"
+                        class="input-field"
+                        placeholder="150000"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Minimal Nabung Harian (Rp)</label>
+                    <input
+                        type="number"
+                        id="solMinDepositInput"
+                        class="input-field"
+                        placeholder="5000"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Mulai Siklus</label>
+                    <input
+                        type="date"
+                        id="solCycleStartInput"
+                        class="input-field"
+                    />
+                </div>
+                <button class="btn-ghost w-100" onclick="saveSolanaSettings()">
+                    Simpan Pengaturan
+                </button>
+
+                <hr class="elegant-hr" />
+
+                <p class="section-label">Riwayat Nabung &amp; Top Up</p>
+                <div id="solanaHistoryList" class="purchase-log-list"></div>
+
+                <p class="section-label mt-3">Riwayat Siklus (30 Hari)</p>
+                <div
+                    id="solanaCycleHistoryList"
+                    class="purchase-log-list"
+                ></div>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="solanaTopupModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Top Up ke <span class="text-accent">Exchange</span>
+                </h3>
+                <p class="subtext">Tersedia: <b id="topupAvailable">Rp0</b></p>
+                <div class="form-group mt-3">
+                    <label>Nominal Top Up (Rp)</label>
+                    <input
+                        type="number"
+                        id="topupAmount"
+                        class="input-field"
+                        placeholder="0"
+                    />
+                </div>
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="processSolanaTopup()"
+                >
+                    Konfirmasi Top Up
+                </button>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="fashionPiggyModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Celengan <span class="text-accent">Fashion</span>
+                </h3>
+                <div class="text-center mt-2">
+                    <p class="subtext">Saldo Cadangan</p>
+                    <h2 style="font-size: 32px" id="fashionPiggyBig">Rp0</h2>
+                </div>
+
+                <div
+                    class="action-grid mt-3"
+                    style="grid-template-columns: 1fr 1fr"
+                >
+                    <button
+                        class="btn-primary"
+                        onclick="adjustFashionPiggy('add')"
+                    >
+                        + Nabung
+                    </button>
+                    <button
+                        class="btn-ghost"
+                        onclick="adjustFashionPiggy('reduce')"
+                    >
+                        - Pakai
+                    </button>
+                </div>
+
+                <hr class="elegant-hr" />
+                <div class="form-group">
+                    <label>Minimal Nabung Harian (Rp)</label>
+                    <input
+                        type="number"
+                        id="fashionMinDepositInput"
+                        class="input-field"
+                        placeholder="3000"
+                    />
+                </div>
+                <button
+                    class="btn-ghost w-100"
+                    onclick="saveFashionPiggySettings()"
+                >
+                    Simpan Pengaturan
+                </button>
+
+                <hr class="elegant-hr" />
+                <p class="section-label">Riwayat</p>
+                <div
+                    id="fashionPiggyHistoryList"
+                    class="purchase-log-list"
+                ></div>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="fashionPiggyAdjustModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" id="fashionAdjustTitle">
+                    Nabung ke Celengan
+                </h3>
+                <div class="form-group mt-3">
+                    <label>Nominal (Rp)</label>
+                    <input
+                        type="number"
+                        id="fashionAdjustAmount"
+                        class="input-field"
+                        placeholder="0"
+                    />
+                </div>
+                <input type="hidden" id="fashionAdjustType" value="add" />
+                <button
+                    class="btn-primary w-100 mt-3"
+                    onclick="processFashionPiggyAdjust()"
+                >
+                    Simpan
+                </button>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="recapPreviewModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    <span class="text-accent">Weekly Recap</span> Preview ✨
+                </h3>
+                <div class="recap-summary">
+                    <div class="summary-row">
+                        <span>Weekly Collected</span>
+                        <b id="recapCollected">Rp0</b>
+                    </div>
+                    <div class="summary-row sub">
+                        <span>Base Split (50:50)</span>
+                        <span id="recapBase">Rp0 Fashion / Rp0 Skincare</span>
+                    </div>
+                    <div
+                        id="recapDebtRow"
+                        class="summary-row text-accent hidden"
+                    >
+                        <span>Debt Adjustment</span>
+                        <span id="recapDebtText"></span>
+                    </div>
+                    <hr class="elegant-hr" />
+                    <div class="summary-row">
+                        <span>Final Fashion</span>
+                        <b id="recapFinalFashion" class="text-green">Rp0</b>
+                    </div>
+                    <div class="summary-row">
+                        <span>Final Skincare</span>
+                        <b id="recapFinalSkincare" class="text-green">Rp0</b>
+                    </div>
+                </div>
+                <p class="subtext text-center mt-3">
+                    Main balance will become 0 and move to savings.
+                </p>
+                <div class="flex-gap mt-4">
+                    <button
+                        class="btn-ghost w-50"
+                        onclick="closeModal('recapPreviewModal')"
+                    >
+                        Cancel
+                    </button>
+                    <button class="btn-primary w-50" onclick="confirmRecap()">
+                        Confirm Recap
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="settingsModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">Settings</h3>
+                <button
+                    class="btn-ghost w-100 mt-3 text-left"
+                    onclick="
+                        initRecap();
+                        closeModal('settingsModal');
+                    "
+                >
+                    <i data-lucide="bar-chart-2"></i> Weekly Recap (Manual)
+                </button>
+                <button
+                    class="btn-ghost w-100 mt-2 text-left"
+                    onclick="processSoftReset()"
+                >
+                    <i data-lucide="rotate-ccw"></i> Soft Reset (Clear
+                    Tracker/History)
+                </button>
+
+                <button
+                    class="btn-ghost w-100 mt-2 text-left text-red"
+                    onclick="openModal('fullResetModal')"
+                >
+                    <i data-lucide="trash-2"></i> Full Reset Data
+                </button>
+            </div>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="fullResetModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title text-red">Warning</h3>
+                <p class="subtext mt-2">
+                    This will delete EVERYTHING permanently. Balances, history,
+                    goals. Are you absolutely sure?
+                </p>
+                <div class="flex-gap mt-4">
+                    <button
+                        class="btn-ghost w-50"
+                        onclick="closeModal('fullResetModal')"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class="btn-primary w-50 bg-red"
+                        onclick="processFullReset()"
+                    >
+                        Yes, Delete All
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="snackbar" class="snackbar">
+            <span id="snackbarMsg">Transaction removed</span>
+            <button id="snackbarAction" class="snackbar-btn">Undo</button>
+        </div>
+
+        <div
+            class="modal-overlay"
+            id="wealthBreakdownModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Total <span class="text-accent">Wealth</span>
+                </h3>
+
+                <div class="recap-summary">
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="wallet"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            ><span class="text-accent">Main</span> Balance</span
+                        >
+                        <b id="brkMain">Rp0</b>
+                    </div>
+                    <div class="summary-row sub">
+                        <span style="padding-left: 20px">Cash</span>
+                        <span id="brkMainCash">Rp0</span>
+                    </div>
+                    <div class="summary-row sub">
+                        <span style="padding-left: 20px">Dana</span>
+                        <span id="brkMainDana">Rp0</span>
+                    </div>
+                    <hr class="elegant-hr" />
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="shirt"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            ><span class="text-accent">Fashion</span>
+                            Savings</span
+                        >
+                        <b id="brkFashion">Rp0</b>
+                    </div>
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="sparkles"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            ><span class="text-accent">Skincare</span>
+                            Savings</span
+                        >
+                        <b id="brkSkincare">Rp0</b>
+                    </div>
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="briefcase"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            >Business
+                            <span class="text-accent">Capital</span></span
+                        >
+                        <b id="brkBusiness">Rp0</b>
+                    </div>
+                    <hr class="elegant-hr" />
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="coins"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            >Celengan
+                            <span class="text-accent">Solana</span></span
+                        >
+                        <b id="brkSolana">Rp0</b>
+                    </div>
+                    <div class="summary-row sub">
+                        <span style="padding-left: 20px">Exchange</span>
+                        <span id="brkSolanaExch">Rp0</span>
+                    </div>
+                    <div class="summary-row sub">
+                        <span style="padding-left: 20px">Belum Top Up</span>
+                        <span id="brkSolanaPend">Rp0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="fw-600"
+                            ><i
+                                data-lucide="piggy-bank"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            >Celengan
+                            <span class="text-accent">Fashion</span></span
+                        >
+                        <b id="brkFashionPiggy">Rp0</b>
+                    </div>
+                    <hr class="elegant-hr" />
+                    <div class="summary-row">
+                        <span style="font-weight: 700; font-size: 15px"
+                            ><i
+                                data-lucide="layers"
+                                style="
+                                    width: 14px;
+                                    height: 14px;
+                                    margin-right: 6px;
+                                    vertical-align: middle;
+                                "
+                            ></i
+                            >TOTAL</span
+                        >
+                        <b
+                            class="text-accent"
+                            id="brkTotal"
+                            style="font-size: 18px"
+                            >Rp0</b
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
 </html>
 
