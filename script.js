@@ -465,8 +465,9 @@ function renderBalances() {
         business: b.business.cash + b.business.dana
     };
     const piggyTotal =
-        (state.piggyBank?.solana?.exchangeTotal || 0) +
-        (state.piggyBank?.fashion?.balance || 0);
+    (state.piggyBank?.solana?.exchangeTotal || 0) +
+    (state.piggyBank?.solana?.pendingAmount || 0) +
+    (state.piggyBank?.fashion?.balance || 0);
     const wealth =
         totals.main +
         totals.fashion +
