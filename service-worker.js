@@ -1,4 +1,4 @@
-const CACHE_NAME = 'solpay-cache-v10';
+const CACHE_NAME = 'solpay-cache-v11';
 const urlsToCache = [
   './',
   './index.html',
