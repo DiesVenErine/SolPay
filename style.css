@@ -1067,3 +1067,11 @@ button {
     color: var(--text-primary);
 }
 
+
+.paylater-item {
+    background: var(--bg-color);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-top: 8px;
+    border-left: 3px solid var(--accent);
+    }
