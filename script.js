@@ -35,6 +35,7 @@ const DEFAULT_STATE = {
     weeklyHistory: [],
     statsWeekId: null,
     purchaseLog: [],
+    paylaterDebts: [],
     piggyBank: {
         solana: {
             cycleStart: null,
@@ -316,6 +317,7 @@ function loadData() {
     if (!state.weeklyHistory) state.weeklyHistory = [];
     if (state.statsWeekId === undefined) state.statsWeekId = null;
     if (!state.purchaseLog) state.purchaseLog = [];
+    if (!state.paylaterDebts) state.paylaterDebts = [];
     if (!state.piggyBank)
         state.piggyBank = JSON.parse(JSON.stringify(DEFAULT_STATE.piggyBank));
 
@@ -362,6 +364,7 @@ function renderAll() {
     renderBusiness();
     renderWeeklyHistory();
     renderPiggyCards();
+    ["fashion", "skincare"].forEach(cat => renderPaylaterList(cat));
 
     // Memastikan Lucide hanya dipanggil jika library sudah siap
     if (typeof lucide !== "undefined") {
@@ -465,9 +468,9 @@ function renderBalances() {
         business: b.business.cash + b.business.dana
     };
     const piggyTotal =
-    (state.piggyBank?.solana?.exchangeTotal || 0) +
-    (state.piggyBank?.solana?.pendingAmount || 0) +
-    (state.piggyBank?.fashion?.balance || 0);
+        (state.piggyBank?.solana?.exchangeTotal || 0) +
+        (state.piggyBank?.solana?.pendingAmount || 0) +
+        (state.piggyBank?.fashion?.balance || 0);
     const wealth =
         totals.main +
         totals.fashion +
@@ -560,6 +563,16 @@ function renderBalances() {
         businessDebtEl.textContent = businessMsg.length
             ? businessMsg.join(" | ")
             : "Tidak ada pinjaman";
+
+    // Update paylater badge di kartu
+    ["fashion", "skincare"].forEach(cat => {
+        const total = getPaylaterTotal(cat);
+        const badge = document.getElementById(`${cat}PaylaterBadge`);
+        const listEl = document.getElementById(`paylaterList_${cat}`);
+        if (badge)
+            badge.textContent = total > 0 ? `Cicilan: ${formatIDR(total)}` : "";
+        if (listEl) renderPaylaterList(cat);
+    });
 
     // Stat kartu Fashion dan Skincare: goal terdekat
     ["fashion", "skincare"].forEach(cat => {
@@ -835,6 +848,161 @@ function renderWeeklyHistory() {
     });
 }
 
+// --- PAYLATER SYSTEM ---
+function getPaylaterTotal(cat) {
+    return state.paylaterDebts
+        .filter(d => d.cat === cat && d.status !== "paid")
+        .reduce((sum, d) => sum + (d.totalAmount - d.paidAmount), 0);
+}
+
+function openPaylaterModal(cat) {
+    document.getElementById("paylaterCat").value = cat;
+    document.getElementById("paylaterDesc").value = "";
+    document.getElementById("paylaterAmount").value = "";
+    document.getElementById("paylaterModalTitle").textContent =
+        `Paylater — ${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
+    openModal("paylaterAddModal");
+}
+
+function savePaylaterDebt() {
+    const cat = document.getElementById("paylaterCat").value;
+    const desc = document.getElementById("paylaterDesc").value.trim();
+    const amount = parseInt(document.getElementById("paylaterAmount").value);
+    if (!desc || !amount || amount <= 0) return;
+
+    const debt = {
+        id: generateId(),
+        cat,
+        desc,
+        totalAmount: amount,
+        paidAmount: 0,
+        status: "pending",
+        createdAt: new Date().toISOString().split("T")[0],
+        paymentLog: []
+    };
+
+    state.paylaterDebts.push(debt);
+
+    // Masuk history sebagai info (tidak kurangi saldo)
+    state.history.push({
+        id: generateId(),
+        type: "paylater_added",
+        cat,
+        wallet: "-",
+        amount,
+        desc: `[Paylater] ${desc}`,
+        day: activeDayIndex,
+        timestamp: Date.now()
+    });
+
+    state.purchaseLog.push({
+        id: generateId(),
+        cat,
+        name: desc,
+        purchaseDate: new Date().toISOString().split("T")[0],
+        expiryDate: null
+    });
+
+    saveData();
+    closeModal("paylaterAddModal");
+    showSnackbar("Paylater tercatat ✨");
+}
+
+function openPayCicilan(debtId) {
+    const debt = state.paylaterDebts.find(d => d.id === debtId);
+    if (!debt) return;
+    document.getElementById("cicilanDebtId").value = debtId;
+    document.getElementById("cicilanDebtName").textContent = debt.desc;
+    document.getElementById("cicilanRemaining").textContent = formatIDR(
+        debt.totalAmount - debt.paidAmount
+    );
+    document.getElementById("cicilanAmount").value = "";
+    setPillValue("cicilanWallet", "cash");
+    openModal("payCicilanModal");
+}
+
+function processPayCicilan() {
+    const id = document.getElementById("cicilanDebtId").value;
+    const wallet = document.getElementById("cicilanWallet").value;
+    const amt = parseInt(document.getElementById("cicilanAmount").value);
+    if (!amt || amt <= 0) return;
+
+    const debt = state.paylaterDebts.find(d => d.id === id);
+    if (!debt) return;
+
+    const rem = debt.totalAmount - debt.paidAmount;
+    const pay = Math.min(amt, rem);
+
+    // Kurangi saldo pos
+    if (!spendFromPos(debt.cat, wallet, pay)) return;
+
+    debt.paidAmount += pay;
+    debt.paymentLog.push({
+        amount: pay,
+        wallet,
+        date: new Date().toISOString().split("T")[0]
+    });
+
+    if (debt.paidAmount >= debt.totalAmount) {
+        debt.status = "paid";
+        showSnackbar("Cicilan lunas! ✨");
+    } else {
+        showSnackbar(
+            `Cicilan disimpan 🟠 Sisa: ${formatIDR(debt.totalAmount - debt.paidAmount)}`
+        );
+    }
+
+    // Masuk history sebagai pengeluaran normal
+    state.history.push({
+        id: generateId(),
+        type: "expense",
+        cat: debt.cat,
+        wallet,
+        amount: pay,
+        desc: `Cicilan: ${debt.desc}`,
+        day: activeDayIndex,
+        timestamp: Date.now()
+    });
+
+    saveData();
+    closeModal("payCicilanModal");
+}
+
+function renderPaylaterList(cat) {
+    const list = document.getElementById(`paylaterList_${cat}`);
+    if (!list) return;
+    const debts = state.paylaterDebts.filter(
+        d => d.cat === cat && d.status !== "paid"
+    );
+    list.innerHTML = "";
+
+    if (debts.length === 0) {
+        list.innerHTML = `<p class="subtext" style="font-size:12px;margin-top:8px;">Tidak ada cicilan aktif ✨</p>`;
+        return;
+    }
+
+    debts.forEach(d => {
+        const rem = d.totalAmount - d.paidAmount;
+        const pct = Math.round((d.paidAmount / d.totalAmount) * 100);
+        const div = document.createElement("div");
+        div.className = "paylater-item";
+        div.innerHTML = `
+            <div class="flex-between">
+                <div>
+                    <div style="font-size:13px;font-weight:600;">${d.desc}</div>
+                    <div class="subtext" style="font-size:11px;">${formatIDR(d.paidAmount)} / ${formatIDR(d.totalAmount)} • ${pct}%</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-red fw-600" style="font-size:13px;">${formatIDR(rem)}</div>
+                    <button class="btn-primary-small mt-2" onclick="openPayCicilan('${d.id}')">Bayar</button>
+                </div>
+            </div>
+            <div class="progress-bar mt-2"><div class="progress-fill" style="width:${pct}%"></div></div>
+        `;
+        list.appendChild(div);
+    });
+}
+
 // --- PURCHASE LOG (Fashion/Skincare) ---
 function openPurchaseLog(cat) {
     document.getElementById("purchaseLogTitle").innerHTML =
@@ -1019,7 +1187,7 @@ function refreshPiggyPlaceholders() {
 
 function togglePiggySection() {
     const sec = document.getElementById("piggyQuickAddSection");
-    const icon = document.getElementById("piggyToggleIcon");
+    const icon = document.getElementById("oggleIcon");
     sec.classList.toggle("hidden");
     icon.style.transform = sec.classList.contains("hidden")
         ? "rotate(0deg)"
