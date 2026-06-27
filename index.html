@@ -181,6 +181,28 @@
                     <div class="debt-info" id="fashionDebtInfo">
                         Tidak ada pinjaman
                     </div>
+                    <div
+                        id="fashionPaylaterBadge"
+                        style="
+                            font-size: 12px;
+                            color: var(--red);
+                            font-weight: 600;
+                            margin-top: 4px;
+                        "
+                    ></div>
+                    <div id="paylaterList_fashion" class="mt-2"></div>
+                    <button
+                        class="card-action-btn"
+                        style="
+                            margin-top: 8px;
+                            background: rgba(203, 161, 53, 0.12);
+                            color: var(--accent);
+                            width: 100%;
+                        "
+                        onclick="openPaylaterModal('fashion')"
+                    >
+                        + Catat Paylater
+                    </button>
                     <div class="card-actions">
                         <button
                             class="card-action-btn income"
@@ -259,6 +281,28 @@
                     <div class="debt-info" id="skincareDebtInfo">
                         Tidak ada pinjaman
                     </div>
+                    <div
+                        id="skincarePaylaterBadge"
+                        style="
+                            font-size: 12px;
+                            color: var(--red);
+                            font-weight: 600;
+                            margin-top: 4px;
+                        "
+                    ></div>
+                    <div id="paylaterList_skincare" class="mt-2"></div>
+                    <button
+                        class="card-action-btn"
+                        style="
+                            margin-top: 8px;
+                            background: rgba(203, 161, 53, 0.12);
+                            color: var(--accent);
+                            width: 100%;
+                        "
+                        onclick="openPaylaterModal('skincare')"
+                    >
+                        + Catat Paylater
+                    </button>
                     <div class="card-actions">
                         <button
                             class="card-action-btn income"
@@ -572,7 +616,16 @@
                             data-val="cash"
                             onclick="selectPill('trxWallet', 'cash')"
                         >
-                            💵 Cash
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
                         </div>
                         <div
                             class="select-pill"
@@ -588,7 +641,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="trxWallet" value="cash" />
@@ -701,7 +754,16 @@
                             data-val="cash"
                             onclick="selectPill('tfFromWallet', 'cash')"
                         >
-                            💵 Cash
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
                         </div>
                         <div
                             class="select-pill"
@@ -717,7 +779,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="tfFromWallet" value="cash" />
@@ -762,7 +824,16 @@
                             data-val="cash"
                             onclick="selectPill('tfToWallet', 'cash')"
                         >
-                            💵 Cash
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
                         </div>
                         <div
                             class="select-pill"
@@ -778,7 +849,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="tfToWallet" value="cash" />
@@ -874,7 +945,16 @@
                             data-val="cash"
                             onclick="selectPill('adjWallet', 'cash')"
                         >
-                            💵 Cash
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
                         </div>
                         <div
                             class="select-pill"
@@ -890,7 +970,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="adjWallet" value="cash" />
@@ -1062,7 +1142,16 @@
                             data-val="cash"
                             onclick="selectPill('bizToWallet', 'cash')"
                         >
-                            💵 Cash
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
                         </div>
                         <div
                             class="select-pill"
@@ -1078,7 +1167,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="bizToWallet" value="cash" />
@@ -1192,7 +1281,7 @@
                             data-val="cash"
                             onclick="selectPill('instWallet', 'cash')"
                         >
-                            💵 Cash
+                            Cash
                         </div>
                         <div
                             class="select-pill"
@@ -1208,7 +1297,7 @@
                                     margin-right: 4px;
                                 "
                             ></i
-                            >DANA
+                            >Dana
                         </div>
                     </div>
                     <input type="hidden" id="instWallet" value="cash" />
@@ -2053,6 +2142,126 @@
                         >
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- MODAL PAYLATER ADD -->
+        <div
+            class="modal-overlay"
+            id="paylaterAddModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title" id="paylaterModalTitle">
+                    Catat <span class="text-accent">Paylater</span>
+                </h3>
+                <div class="form-group">
+                    <label>Nama Item</label>
+                    <input
+                        type="text"
+                        id="paylaterDesc"
+                        class="input-field"
+                        placeholder=""
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Total Harga (Rp)</label>
+                    <input
+                        type="number"
+                        id="paylaterAmount"
+                        class="input-field"
+                        placeholder="0"
+                        inputmode="numeric"
+                    />
+                </div>
+                <input type="hidden" id="paylaterCat" value="fashion" />
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="savePaylaterDebt()"
+                >
+                    Simpan
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL BAYAR CICILAN -->
+        <div
+            class="modal-overlay"
+            id="payCicilanModal"
+            onclick="closeModal(this.id, event)"
+        >
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <h3 class="modal-title">
+                    Bayar <span class="text-accent">Cicilan</span>
+                </h3>
+                <p class="subtext" id="cicilanDebtName">—</p>
+                <div class="form-group mt-3">
+                    <label>Sisa Tagihan</label>
+                    <div
+                        class="fw-600 text-red"
+                        id="cicilanRemaining"
+                        style="font-size: 18px"
+                    >
+                        Rp0
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nominal Bayar (Rp)</label>
+                    <input
+                        type="number"
+                        id="cicilanAmount"
+                        class="input-field"
+                        placeholder="0"
+                        inputmode="numeric"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>Dari Dompet</label>
+                    <div class="custom-select-group" id="group_cicilanWallet">
+                        <div
+                            class="select-pill active"
+                            data-val="cash"
+                            onclick="selectPill('cicilanWallet', 'cash')"
+                        >
+                            <i
+                                data-lucide="banknote"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Cash
+                        </div>
+                        <div
+                            class="select-pill"
+                            data-val="dana"
+                            onclick="selectPill('cicilanWallet', 'dana')"
+                        >
+                            <i
+                                data-lucide="credit-card"
+                                style="
+                                    width: 12px;
+                                    height: 12px;
+                                    vertical-align: middle;
+                                    margin-right: 4px;
+                                "
+                            ></i
+                            >Dana
+                        </div>
+                    </div>
+                    <input type="hidden" id="cicilanWallet" value="cash" />
+                </div>
+                <input type="hidden" id="cicilanDebtId" value="" />
+                <button
+                    class="btn-primary w-100 mt-4"
+                    onclick="processPayCicilan()"
+                >
+                    Simpan Pembayaran
+                </button>
             </div>
         </div>
 
